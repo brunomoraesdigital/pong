@@ -29,6 +29,8 @@ body {
     overflow: hidden;
     color: #fff;
     text-align: center;
+    letter-spacing: 1px;
+    word-spacing: 2px;
 }
 .cabecalho {
     background-color: #222222;
@@ -44,7 +46,8 @@ h1 {
 }
 h2 {
     /*font-size: .9rem;*/
-    font-size: clamp(0.2rem, 3.5vw, 1.5rem);
+    font-size: clamp(0.2rem, 3.5vw, 0.9rem);
+    
 }
 .rodape {
     background-color: #222222;
@@ -56,7 +59,7 @@ h2 {
 }
 p {
     /*font-size: .9rem;*/
-    font-size: clamp(0.2rem, 3.5vw, 1.5rem);
+    font-size: clamp(0.2rem, 3.5vw, 0.9rem);
     white-space: nowrap;
 }
 .gameContainer {
