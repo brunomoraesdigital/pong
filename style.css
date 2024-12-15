@@ -90,14 +90,12 @@ p {
 
 .raqueteEsquerda {
     left: 0;
-    transform: translateY(-50%);
-    top: 50%;
+    top: 40%;
 }
 
 .raqueteDireita {
     right: 0;
-    transform: translateY(-50%);
-    top: 50%;
+    top: 40%;
 }
 
 .bola {

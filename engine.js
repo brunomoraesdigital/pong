@@ -1,7 +1,7 @@
 /* dados dos elementos */
 const tabuleiroElemento = document.getElementById('tabuleiro');
-const raqueteEsquerdaElemento = document.getElementById('raqueteEsquerda');
-const raqueteDireitaElemento = document.getElementById('raqueteDireita');
+const raqueteEsqElemento = document.getElementById('raqueteEsquerda');
+const raqueteDirElemento = document.getElementById('raqueteDireita');
 const bolaElemento = document.getElementById('bola');
 const pontuacaoEsquerdaElemento = document.getElementById('pontuacaoEsquerda');
 const pontuacaoDireitaElemento = document.getElementById('pontuacaoDireita');
@@ -31,22 +31,6 @@ console.log(`Posição Bola X (Esquerda): ${bolaPosX}`);
 
 let bolaVelY = 2;
 let bolaVelX = 2;
-
-/* dados das raquetes */
-
-let raqEsqPosY = raqueteEsquerdaElemento.offsetTop;
-let raqDirposY = raqueteDireitaElemento.offsetTop;
-
-console.log(`Posição raq esq Y (Topo): ${raqEsqPosY}`);
-console.log(`Posição raq dir y (topo): ${raqDirposY}`);
-
-let raqDirAltura = raqueteDireitaElemento.offsetHeight;
-let raqEsqAltura = raqueteDireitaElemento.offsetHeight;
-
-console.log(`altura raq esq: ${raqDirAltura}`);
-console.log(`altura raq dir: ${raqEsqAltura}`);
-
-/* dados do placar */
 
 /* movimento da bola */
 function movimentoBola() {
@@ -78,7 +62,54 @@ setInterval(function () {
 
 }, 16);
 
-/* posição das raquetes */ 
+/* dados das raquetes */
+
+let raqEsqPosY = raqueteEsqElemento.offsetTop;
+let raqDirPosY = raqueteDirElemento.offsetTop;
+
+let raqVel = 4;
+
+
+console.log(`Posição raq esq Y (Topo): ${raqEsqPosY}`);
+console.log(`Posição raq dir y (topo): ${raqDirPosY}`);
+
+let raqDirAltura = raqueteDirElemento.offsetHeight;
+let raqEsqAltura = raqueteDirElemento.offsetHeight;
+
+console.log(`altura raq esq: ${raqDirAltura}`);
+console.log(`altura raq dir: ${raqEsqAltura}`);
+
+/* movimento das raquetes */
+
+function processarTecla(evento) {
+    // Movimento da raquete esquerda
+    if (evento.key === 'w' && raqEsqPosY > linTopTab +1) {
+        console.log('Você pressionou a tecla w!');
+        raqEsqPosY -= raqVel;
+        raqueteEsqElemento.style.top = `${raqEsqPosY}px`;
+    }
+    if (evento.key === 's' && raqEsqPosY < linBasTab - raqEsqAltura - 5) {
+        console.log('Você pressionou a tecla s!');
+        raqEsqPosY += raqVel;
+        raqueteEsqElemento.style.top = `${raqEsqPosY}px`;
+    }
+
+    // Movimento da raquete direita
+    if (evento.key === 'ArrowUp' && raqDirPosY > linTopTab +1) {
+        console.log('Você pressionou a tecla seta para cima!');
+        raqDirPosY -= raqVel;
+        raqueteDirElemento.style.top = `${raqDirPosY}px`;
+    }
+    if (evento.key === 'ArrowDown' && raqDirPosY < linBasTab - raqDirAltura -5) {
+        console.log('Você pressionou a tecla seta para baixo!');
+        raqDirPosY += raqVel;
+        raqueteDirElemento.style.top = `${raqDirPosY}px`;
+    }
+}
+
+
+document.addEventListener('keydown', processarTecla);
+
 
 
 
