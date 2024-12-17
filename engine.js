@@ -29,8 +29,6 @@ let bolaVelX = 2;
 let pontuacaoEsquerda = 0; // Variável para armazenar pontos do jogador esquerdo
 let pontuacaoDireita = 0; // Variável para armazenar pontos do jogador direito
 
-let pontoMaximo = 5;
-
 let raqEsqPosY = raqueteEsqElemento.offsetTop;
 let raqDirPosY = raqueteDirElemento.offsetTop;
 
@@ -71,20 +69,19 @@ setInterval(function () {
     bolaPosX += bolaVelX;
     bolaPosY += bolaVelY;
 
-    colisaoBolaTabuleiroHorizontal(); // Verifica colisões
+    colisaoBolaTabuleiroHorizontal(); 
 
     colisaoBolaRaquete();
 
     verificarGol()
 
-    movimentoBola(); // Atualiza a posição da bola
+    movimentoBola(); 
 
 }, 16);
 
 /* movimento das raquetes */
 
 function processarTecla(evento) {
-    // Movimento da raquete esquerda
     if (evento.key === 'w' && raqEsqPosY > linTopTab + 1) {
         console.log('Você pressionou a tecla w!');
         raqEsqPosY -= raqVel;
@@ -112,7 +109,6 @@ function processarTecla(evento) {
 document.addEventListener('keydown', processarTecla);
 
 function colisaoBolaRaquete() {
-    // Colisão com a raquete direita
     if (
         bolaPosX + bolaElemento.offsetWidth >= linDirTab - raqueteDirElemento.offsetWidth && // A bola atinge a borda esquerda da raquete direita
         bolaPosY + bolaElemento.offsetHeight >= raqDirPosY && // A bola está abaixo do topo da raquete
@@ -122,7 +118,6 @@ function colisaoBolaRaquete() {
         console.log('Colisão com a raquete direita!');
     }
 
-    // Colisão com a raquete esquerda
     if (
         bolaPosX <= raqueteEsqElemento.offsetWidth && // A bola atinge a borda direita da raquete esquerda
         bolaPosY + bolaElemento.offsetHeight >= raqEsqPosY && // A bola está abaixo do topo da raquete
@@ -137,7 +132,7 @@ function verificarGol() {
         // Bola ultrapassou o lado esquerdo
         console.log('Ponto para a direita!');
         pontuacaoDireita++; // Aumenta a pontuação do jogador da direita
-        pontuacaoDireitaElemento.textContent = pontuacaoDireita; // Atualiza a tela
+        pontuacaoDireitaElemento.textContent = pontuacaoDireita; 
         reiniciarBola();
     }
 
@@ -145,7 +140,7 @@ function verificarGol() {
         // Bola ultrapassou o lado direito
         console.log('Ponto para a esquerda!');
         pontuacaoEsquerda++; // Aumenta a pontuação do jogador da esquerda
-        pontuacaoEsquerdaElemento.textContent = pontuacaoEsquerda; // Atualiza a tela
+        pontuacaoEsquerdaElemento.textContent = pontuacaoEsquerda; 
         reiniciarBola();
     }
 }
