@@ -9,7 +9,7 @@ Este é um jogo clássico de **Pong**, desenvolvido como parte do meu aprendizad
 O **Pong Game** foi criado com o intuito de:
 - Recriar o clássico jogo Pong de forma simples e divertida.
 - Praticar o uso de JavaScript para manipulação de elementos no DOM e lógica de jogo.
-- Melhorar as habilidades de design com **CSS** e estruturar com **HTML**.
+- Melhorar as habilidades de design e responsividade com **CSS** e estruturar com **HTML**.
 
 ## Funcionalidades
 
@@ -24,6 +24,8 @@ O **Pong Game** foi criado com o intuito de:
 - **Reinício Automático**: A bola e as raquetes são reposicionadas automaticamente no centro após cada ponto.
 
 - **Design Simples**: A interface do jogo tem um design minimalista, com a área de jogo e os elementos representados de forma clara e simples.
+  
+- **Design Responsivo**: Funciona em qualquer tamanho de tela.
 
 ## Tecnologias Utilizadas
 
