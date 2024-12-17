@@ -30,15 +30,16 @@ O **Pong Game** foi criado com o intuito de:
 ## Tecnologias Utilizadas
 
 - **HTML**: Estrutura da página e dos elementos do jogo.
-- **CSS**: Estilização da área de jogo, raquetes, bola e pontuação.
-- **JavaScript**: Lógica do jogo, movimentação da bola, colisões e atualização da pontuação.
+- **CSS**: Estilização do jogo, com destaque para a responsividade.
+- **JavaScript**: Lógica do jogo e alguns ajustes de posicionamento.
 
 ## Melhorias a serem implementadas
 
 - [ ] incluir a pontuação máxima para o valor de 5.
 - [ ] Ajustar a velocidade da bola ao acertar as raquetes.
 - [ ] incluir uma contagem de tempo para inicio do jogo, bem como para reinicio da partida.
-- [ ] dependendo de onde a bolinha acertar na raquete, a bolinha deve ir em um angulo direrente.
+- [ ] Dependendo de onde a bolinha acertar na raquete, a bolinha deve ir em um angulo direrente.
+- [ ] Incluir um pequeno tutorial.
 
 ## Problemas Observados a Serem Resolvidos
 
