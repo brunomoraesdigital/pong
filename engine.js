@@ -81,32 +81,45 @@ setInterval(function () {
 
 /* movimento das raquetes */
 
-function processarTecla(evento) {
-    if (evento.key === 'w' && raqEsqPosY > linTopTab + 1) {
-        console.log('Você pressionou a tecla w!');
+// Objeto para rastrear o estado das teclas pressionadas
+var teclasPressionadas = {};
+
+// Adiciona as teclas pressionadas ao objeto
+document.addEventListener('keydown', function (evento) {
+    teclasPressionadas[evento.key] = true;
+});
+
+// Remove as teclas do objeto ao soltá-las
+document.addEventListener('keyup', function (evento) {
+    teclasPressionadas[evento.key] = false;
+});
+
+// Atualiza continuamente o movimento das raquetes
+function atualizarMovimentoRaquetes() {
+    // Movimento da raquete esquerda (teclas 'w' e 's')
+    if (teclasPressionadas['w'] && raqEsqPosY > linTopTab + 1) {
         raqEsqPosY -= raqVel;
-        raqueteEsqElemento.style.top = `${raqEsqPosY}px`;
+        raqueteEsqElemento.style.top = raqEsqPosY + 'px';
     }
-    if (evento.key === 's' && raqEsqPosY < linBasTab - raqEsqAltura - 5) {
-        console.log('Você pressionou a tecla s!');
+    if (teclasPressionadas['s'] && raqEsqPosY < linBasTab - raqEsqAltura - 5) {
         raqEsqPosY += raqVel;
-        raqueteEsqElemento.style.top = `${raqEsqPosY}px`;
+        raqueteEsqElemento.style.top = raqEsqPosY + 'px';
     }
 
-    // Movimento da raquete direita
-    if (evento.key === 'ArrowUp' && raqDirPosY > linTopTab + 1) {
-        console.log('Você pressionou a tecla seta para cima!');
+    // Movimento da raquete direita (teclas 'ArrowUp' e 'ArrowDown')
+    if (teclasPressionadas['ArrowUp'] && raqDirPosY > linTopTab + 1) {
         raqDirPosY -= raqVel;
-        raqueteDirElemento.style.top = `${raqDirPosY}px`;
+        raqueteDirElemento.style.top = raqDirPosY + 'px';
     }
-    if (evento.key === 'ArrowDown' && raqDirPosY < linBasTab - raqDirAltura - 5) {
-        console.log('Você pressionou a tecla seta para baixo!');
+    if (teclasPressionadas['ArrowDown'] && raqDirPosY < linBasTab - raqDirAltura - 5) {
         raqDirPosY += raqVel;
-        raqueteDirElemento.style.top = `${raqDirPosY}px`;
+        raqueteDirElemento.style.top = raqDirPosY + 'px';
     }
 }
 
-document.addEventListener('keydown', processarTecla);
+// Executa o movimento continuamente
+setInterval(atualizarMovimentoRaquetes, 16);
+
 
 function colisaoBolaRaquete() {
     if (

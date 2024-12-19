@@ -44,7 +44,7 @@ O **Pong Game** foi criado com o intuito de:
 ## Problemas Observados a Serem Resolvidos
 
 - [ ] A bola nem sempre reinicia indo para o lado contrário.
-- [ ] Não é possível usar as duas raquetes juntas.
+- [x] Não é possível usar as duas raquetes juntas.
 - [ ] As raquetes tem um pequeno atraso para iniciar o movimento.
 - [ ] Algumas vezes a bolinha desliza verticalmente e rente pela lateral da raquete, ou mesmo passa por dentro da raquete.
 
