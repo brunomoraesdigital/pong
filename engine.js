@@ -10,3 +10,4 @@ const elementoPontuacao = document.getElementById('pontuacao');
 const elementoNivel = document.getElementById('nivel');
 const elementoVidas = document.getElementById('vidas'); 
  
+dont
