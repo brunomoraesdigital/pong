@@ -2,36 +2,44 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pong - Jogo de Atari</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pong - Jogo de Atari</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="container" id="container">
-        <header class="cabecalho">
-            <h1>Pong</h1>
-            <h2>Minha versão desse clássico</h2>
-        </header>
-        <main id="gameContainer" class="gameContainer">
-            <div id="tabuleiro" class="tabuleiro">
-                <div id="raqueteEsquerda" class="raqueteEsquerda"></div>
-                <div id="raqueteDireita" class="raqueteDireita"></div>
-                <div id="bola" class="bola"></div>
-                <div id="pontuacao" class="pontuacao">
-                    <span id="pontuacaoEsquerda" class="pontuacaoEsquerda">0</span> : <span
-                        id="pontuacaoDireita">0</span>
-                </div>
-            </div>
-        </main>
-        <footer class="rodape">
-            <p>
-                &#169; 2024 Bruno Moraes | Evoluindo a cada código
-            </p>
-        </footer>
-    </div>
-    <script src="engine.js"></script>
+  <div class="container" id="container">
+    <header class="cabecalho">
+      <h1>Pong</h1>
+      <h2>Minha versão desse clássico</h2>
+    </header>
+    <main id="areaDoJogo" class="areaDoJogo">
+      <div id="caixaDoJogo" class="caixaDoJogo">
+        <div id="interface" class="interface">
+          <div id="pontuacao" class="pontuacao"></div>
+          <div id="nivel" class="nivel"></div>
+          <div id="vidas" class="vidas">
+            <span>&#x26AA</span>
+            <span>&#x26AA</span>
+            <span>&#x26AA</span>
+          </div>
+        </div>
+        <div id="tabuleiro" class="tabuleiro">
+          <div id="raqueteEsquerda" class="raqueteEsquerda"></div>
+          <div id="raqueteDireita" class="raqueteDireita"></div>
+          <div id="bola" class="bola"></div>
+        </div>
+      </div>
+    </main>
+    <footer class="rodape">
+      <p>
+        &#169; 2024 Bruno Moraes | Evoluindo a cada código
+      </p>
+    </footer>
+  </div>
+  <script src="engine.js"></script>
+  <script src="depuracao-elementos.js"></script>
 </body>
 
 </html>
