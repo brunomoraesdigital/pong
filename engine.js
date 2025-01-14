@@ -8,5 +8,5 @@ const elementoRaqueteDireita = document.getElementById('raqueteDireita');
 const elementoInterface = document.getElementById('interface');
 const elementoPontuacao = document.getElementById('pontuacao');
 const elementoNivel = document.getElementById('nivel');
-const elementoVidas = document.getElementById('vidas');
-
+const elementoVidas = document.getElementById('vidas'); 
+ 
