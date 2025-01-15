@@ -1,0 +1,91 @@
+1 const elementoCaixa = document.getElementById('caixa');
+2 const elementoBola = document.getElementById('bola');
+3
+4 let larguraDaTela = window.innerWidth;
+5 let alturaDaTela = window.innerHeight;
+6
+7 let larguraDaCaixa;
+8 let alturaDaCaixa;
+9
+10 let comprimentoDaBola;
+11
+12 let posicaoBolaX;
+13 let posicaoBolaY;
+14
+15 let velocidadeBolaX;
+16 let velocidadeBolaY;
+17
+18 function dimensionar() {
+19
+20 larguraDaCaixa = Math.floor(`${(larguraDaTela * 90) / 100}`);
+21 alturaDaCaixa = Math.floor(`${(alturaDaTela * 50) / 100}`);
+22
+23 comprimentoDaBola = Math.floor(`${(larguraDaTela * 2.4) / 100}`);
+24
+25 if (larguraDaTela > alturaDaTela) {
+26 larguraDaCaixa = Math.floor(`${(larguraDaTela * 40) / 100}`);
+27 alturaDaCaixa = Math.floor(`${(alturaDaTela * 20) / 100}`);
+28
+29 comprimentoDaBola = Math.floor(`${(larguraDaTela * 1) / 100}`);
+30 }
+31 }
+32
+33 function estilizar() {
+34 elementoCaixa.style.width = `${larguraDaCaixa}px`;
+35 elementoCaixa.style.height = `${alturaDaCaixa}px`;
+36
+37 elementoBola.style.width = `${comprimentoDaBola}px`;
+38 elementoBola.style.height = `${comprimentoDaBola}px`;
+39 }
+40
+41 function posicionar() {
+42 posicaoBolaX = larguraDaCaixa / 2;
+43 posicaoBolaY = alturaDaCaixa / 2;
+44
+45 elementoBola.style.top = `${posicaoBolaY}px`;
+46 elementoBola.style.left = `${posicaoBolaX}px`;
+47 }
+48
+49 function movimentar() {
+50 velocidadeBolaX = 2;
+51 velocidadeBolaY = 2;
+52
+53 }
+54 function atualizar() {
+55 posicaoBolaX += velocidadeBolaX;
+56 posicaoBolaY += velocidadeBolaY;
+57
+58 colidir();
+59
+60 elementoBola.style.top = `${posicaoBolaY}px`;
+61 elementoBola.style.left = `${posicaoBolaX}px`;
+62 }
+63 function colidir () {
+64 if (posicaoBolaX  0| posicaoBolaX + comprimentoDaBol = larguraDaCaixa
+65 velocidadeBolaX = -velocidadeBolaX;/ Inverte a direção horizont
+66 }
+67
+68 if (posicaoBolaY  0| posicaoBolaY + comprimentoDaBol = alturaDaCaixa
+69 velocidadeBolaY = -velocidadeBolaY;/ Inverte a direção vertic
+70 }
+71 }
+72
+73 function depurar() {
+74 console.log(`Largura da Tela: ${larguraDaTela}px \nAltura da Tela: ${alturaDaTela}px`);
+75 console.log(`Largura da Caixa: ${larguraDaCaixa}px \nAltura da Caixa: ${alturaDaCaixa}px`);
+76 console.log(`Comprimento da Bola: ${comprimentoDaBola}px`);
+77 }
+78
+79 function inicializar() {
+80
+81 dimensionar();
+82 estilizar();
+83 posicionar();
+84 movimentar();
+85 depurar();
+86
+87 setInterval(atualizar, 16);
+88
+89 }
+90
+91 inicializar();

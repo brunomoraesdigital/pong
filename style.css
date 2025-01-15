@@ -3,16 +3,19 @@
     padding: 0;
     box-sizing: border-box;
 }
+
 html {
     width: 100vw;
     height: 100vh;
     font-size: 16px;
 }
+
 body {
     width: 100%;
     height: 100%;
     position: fixed;
 }
+
 .container {
     width: 100%;
     height: 100%;
@@ -27,6 +30,7 @@ body {
     letter-spacing: 1px;
     word-spacing: 2px;
 }
+
 .cabecalho {
     background-color: #222222;
     width: 100%;
@@ -34,58 +38,136 @@ body {
     flex: 0 0 auto;
 
 }
+
 h1 {
     font-size: clamp(0.2rem, 8vw, 1.5rem);
     margin-bottom: .5rem;
 }
+
 h2 {
     font-size: clamp(0.2rem, 3.5vw, 0.9rem);
-    
+
 }
+
 .rodape {
     background-color: #222222;
-    width: 100%; 
+    width: 100%;
     padding: 1rem 0;
     flex: 0 0 auto;
     overflow: hidden;
-    
+
 }
+
 p {
     font-size: clamp(0.2rem, 3.5vw, 0.9rem);
     white-space: nowrap;
 }
+
 .areaDoJogo {
     flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.caixaDoJogo { 
-  dont
+
+.caixaDoJogo {
+    max-width: 50%;
+    max-height: 70%;
+    display: flex;
+    flex-direction: column;
 }
+
 .interface {
-  
+    display: grid;
+    height: 10%;
+    width: 100%;
+    padding: 0 10px;
+    font-size: 0.7rem;
+    font-weight: bolder;
+    text-transform: uppercase; /* Maiúsculas */
+    grid-template-columns: 2fr 1fr; /* Duas colunas: primeira maior */
+    grid-template-rows: 1fr 1fr;  /* Duas linhas de altura igual */
+    align-items: center; /* Centraliza os itens verticalmente */
+    justify-items: start;
 }
+
+.interface span {
+    font-family: "Press Start 2P", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.pontuacao {
+    grid-column: 1; /* Ocupa a primeira coluna */
+    grid-row: 1 / 3; /* Ocupa ambas as linhas */
+    display: flex;
+    flex-direction: column; 
+    text-align: right;
+    gap: 6px;
+}
+
+.nivel {
+    grid-column: 2; /* Segunda coluna */
+    grid-row: 1; /* Primeira linha */
+    display: flex;
+}
+
+.vidas {
+    grid-column: 2; /* Segunda coluna */
+    grid-row: 2; /* Segunda linha */
+    display: flex;
+    margin-top: -6px;
+}
+
 .tabuleiro {
-  
+    height: 90%;
+    border: 1px solid #fff;
+    background-color: #222222;
+    position: relative;
 }
 
-.raqueteEsquerda, .raqueteDireita {
-    
+.botao {
+    background-color: #444; 
+    color: #fff; 
+    border: 2px solid #fff; 
+    padding: 12px 20px; 
+    font-family: "Press Start 2P", serif; 
+    font-size: 1rem; 
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+    cursor: pointer; 
+    transition: background-color 0.3s ease, transform 0.3s ease; 
+    border-radius: 5px; 
+    display: block;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centraliza o botão */
+    transform-origin: center center; /* Define o ponto de origem da transformação */
 }
 
-.raqueteEsquerda {
-    
+.botao:hover {
+    background-color: #666; /* Cor de fundo ao passar o mouse */
 }
 
-.raqueteDireita {
-    
+.botao:active {
+    background-color: #333; /* Cor de fundo ao clicar */
+    transform: translate(-50%, -50%) scale(0.95); /* Aplica a transformação e mantém a centralização */
+}
+
+.raquete {
+    background-color: #ffffff;
+    position: absolute;
+    bottom: 0px;
 }
 
 .bola {
-    
-    
-}
-.pontuacao {
-    
-}
-.pontuacao > span {
-    
+    border-radius: 50%;
+    background-color: #fff;
+    position: absolute;
+    bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
