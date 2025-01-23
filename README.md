@@ -31,7 +31,7 @@ O **Pong Game** foi criado com o intuito de:
 
 - **HTML**: Estrutura da página e dos elementos do jogo.
 - **CSS**: Estilização do jogo, com destaque para a responsividade.
-- **JavaScript**: Lógica do jogo e alguns ajustes de posicionamento.
+- **JavaScript**: Lógica do jogo e alguns ajustes de posicao.
 
 ## Melhorias a serem implementadas
 
