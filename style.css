@@ -77,8 +77,8 @@ p {
 .caixaDoJogo {
   width: 90%;
   height: 90%;
-  /*max-width: 30rem;
-  max-height: 40rem;*/
+  max-width: 30rem;
+  max-height: 40rem;
   display: flex;
   flex-direction: column;
   /*background-color: burlywood;*/
