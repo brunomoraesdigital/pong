@@ -56,28 +56,28 @@ function atualizaTamanhoDaFonte(alturaTela) {
   document.documentElement.style.setProperty('--font-size', tamanhoDaFonte + 'px');
   console.log('Tamanho da fonte: ' + tamanhoDaFonte + 'px');
 }
-  let primeiraExecucao = true;
-  let contResize = 0;
-  
-  function quandoTelaAtualizar() {
-    
-    // Não fazer nada na primeira execução
-    if (primeiraExecucao) {
-      primeiraExecucao = false;
-      return;
-    }
-    contResize++;
-    console.log('A tela foi redimensionada '+ contResize + 'x');
-    const { larguraTela, alturaTela } = obterDimensoesTela();
-    atualizaTamanhoDaFonte(alturaTela);
- 
+let primeiraExecucao = true;
+let contResize = 0;
+
+function quandoTelaAtualizar() {
+
+  // Não fazer nada na primeira execução
+  if (primeiraExecucao) {
+    primeiraExecucao = false;
+    return;
   }
+  contResize++;
+  console.log('A tela foi redimensionada ' + contResize + 'x');
+  const { larguraTela, alturaTela } = obterDimensoesTela();
+  atualizaTamanhoDaFonte(alturaTela);
+
+}
 
 
 let debounce;
 window.addEventListener('resize', function() {
   clearTimeout(debounce);
-  debounce = setTimeout( function () {
+  debounce = setTimeout(function() {
     quandoTelaAtualizar();
   }, 200);
 });
@@ -87,4 +87,3 @@ const dimensoesRaquete = obterDimensoesRaquete();
 const dimensoesBola = obterDimensoesBola();
 const dimensoesTabuleiro = obterDimensoesTabuleiro();
 const dimensoesTela = obterDimensoesTela();
-atualizaTamanhoDaFonte(dimensoesTela.alturaTela);
