@@ -72,9 +72,13 @@ function quandoTelaAtualizar() {
   const dimensoesRaquete = obterDimensoesRaquete();
   const dimensoesTabuleiro = obterDimensoesTabuleiro();
 
-  posicionarBola(dimensoesBola, dimensoesTabuleiro);
+  posicionarBola(dimensoesBola, dimensoesTabuleiro, dimensoesRaquete);
   posicionarRaquete(dimensoesRaquete, dimensoesTabuleiro);
 
+  velocidadeBolinhaX = posicionarBola.posicaoBolaHorizontal;
+  velocidadeBolinhaY = posicionarBola.posicaoBolaVertical;
+
+  animarBolinha();
 }
 
 let debounce;
@@ -86,19 +90,21 @@ window.addEventListener('resize', function() {
 });
 
 // Chamadas das funções
-const dimensoesRaquete = obterDimensoesRaquete();
+/*const dimensoesRaquete = obterDimensoesRaquete();
 const dimensoesBola = obterDimensoesBola();
 const dimensoesTabuleiro = obterDimensoesTabuleiro();
 const dimensoesTela = obterDimensoesTela();
+*/
 
-
-function posicionarBola(dimensoesBola, dimensoesTabuleiro) {
+function posicionarBola(dimensoesBola, dimensoesTabuleiro, dimensoesRaquete) {
   let posicaoBolaHorizontal = Math.floor((dimensoesTabuleiro.largura / 2) - (dimensoesBola.largura / 2));
-  let posicaoBolaVertical = Math.floor((dimensoesTabuleiro.altura / 2) - (dimensoesBola.altura / 2));
+  let posicaoBolaVertical = Math.floor((dimensoesTabuleiro.altura - dimensoesRaquete) - (dimensoesBola.altura / 2));
   elementoBola.style.left = posicaoBolaHorizontal + 'px';
   elementoBola.style.top = posicaoBolaVertical + 'px';
   console.log('Bola posicionada horizontalmente em: ' + posicaoBolaHorizontal + 'px\n' +
     'Bola posicionada verticalmente em: ' + posicaoBolaVertical + 'px');
+
+  return { posicaoBolaHorizontal, posicaoBolaVertical }
 }
 
 function posicionarRaquete(dimensoesRaquete, dimensoesTabuleiro) {
@@ -106,6 +112,19 @@ function posicionarRaquete(dimensoesRaquete, dimensoesTabuleiro) {
   elementoRaquete.style.left = posicaoRaqueteHorizontal + 'px';
 
   console.log('Raquete posicionada horizontalmente em: ' + posicaoRaqueteHorizontal + 'px');
-
-
 }
+
+let velocidadeBolinhaX;
+let velocidadebolinhaY;
+
+function animarBolinha() {
+
+  velocidadeBolinhaX += 2;
+  velocidadeBolinhaY += 2;
+
+  elementoBola.style.left = velocidadeBolinhaX + 'px';
+  elementoBola.style.top = velocidadeBolinhaY + 'px';
+}
+const intervalo = setInterval(animarBolinha, 16);
+
+quandoTelaAtualizar(); // Executa a lógica uma vez no carregamento inicial
