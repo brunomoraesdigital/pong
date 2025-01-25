@@ -75,8 +75,8 @@ p {
 }
 
 .caixaDoJogo {
-  width: 90%;
-  height: 90%;
+  width: 90vw;
+  height: 65vh;
   max-width: 30rem;
   max-height: 40rem;
   display: flex;
@@ -157,6 +157,7 @@ p {
   left: 50%;
   transform: translate(-50%, -50%);
   transform-origin: center center;
+  display: none;
 }
 
 .botao:hover {
