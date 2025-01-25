@@ -56,14 +56,14 @@ function atualizaTamanhoDaFonte(alturaTela) {
   document.documentElement.style.setProperty('--font-size', tamanhoDaFonte + 'px');
   console.log('Tamanho da fonte: ' + tamanhoDaFonte + 'px');
 }
-let primeiraExecucao = true;
+let primeiroCarregamento  = true;
 let contResize = 0;
 
 function quandoTelaAtualizar() {
 
   // Não fazer nada na primeira execução
-  if (primeiraExecucao) {
-    primeiraExecucao = false;
+  if (primeiroCarregamento ) {
+    primeiroCarregamento  = false;
     return;
   }
   contResize++;
