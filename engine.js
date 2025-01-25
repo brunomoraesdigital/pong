@@ -2,6 +2,8 @@ const elementoRaquete = document.getElementById('raquete');
 const elementoBola = document.getElementById('bola');
 const elementoTabuleiro = document.getElementById('tabuleiro');
 
+const ALTURA_REFERENCIA = 766;
+
 function obterDimensoesRaquete() {
   const largura = elementoRaquete.offsetWidth;
   const altura = elementoRaquete.offsetHeight;
@@ -36,18 +38,18 @@ function obterDimensoesTabuleiro() {
 }
 
 function obterDimensoesTela() {
-  let larguraTela = window.innerWidth;
+  let largura = window.innerWidth;
   let alturaTela = window.innerHeight;
   console.log(
     'Tela:\n' +
-    '\tLargura: ' + larguraTela + 'px\n' +
+    '\tLargura: ' + largura + 'px\n' +
     '\tAltura: ' + alturaTela + 'px'
   );
-  return { larguraTela, alturaTela };
+  return { largura, alturaTela };
 }
 
 function atualizaTamanhoDaFonte(alturaTela) {
-  let tamanhoDaFonte = Math.floor((16 * alturaTela) / 766);
+  let tamanhoDaFonte = Math.floor((16 * alturaTela) / ALTURA_REFERENCIA);
   document.documentElement.style.setProperty('--font-size', tamanhoDaFonte + 'px');
   console.log('Tamanho da fonte: ' + tamanhoDaFonte + 'px');
 }
@@ -63,7 +65,7 @@ function quandoTelaAtualizar() {
   contResize++;
   console.log('A tela foi redimensionada ' + contResize + 'x');
 
-  const { larguraTela, alturaTela } = obterDimensoesTela();
+  const { largura, alturaTela } = obterDimensoesTela();
   atualizaTamanhoDaFonte(alturaTela);
 
   const dimensoesBola = obterDimensoesBola();
