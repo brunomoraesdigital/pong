@@ -1,3 +1,48 @@
+function obterDimensoesDaTela() {
+    let largura = window.innerWidth;
+    let altura = window.innerHeight;
+
+    console.log(
+        'Dimensões da Tela\n' +
+        '\tLargura:\t' + largura +
+        '\n\tAltura:\t\t' + altura
+
+    )
+    return { largura, altura };
+}
+
+
+const ALTURA_REFERENCIA = 914;
+const FONT_REFERENCIA = 16;
+function atualizarTamanhoDaFonte(altura) {
+    let tamanhoDaFonte = Math.floor((FONT_REFERENCIA * altura) / ALTURA_REFERENCIA);
+    document.documentElement.style.setProperty('--font-size', tamanhoDaFonte + 'px');
+
+    console.log('Fonte: ' + tamanhoDaFonte);
+}
+
+
+function carregarLayout() {
+    // Destructuring para pegar a altura
+    const { altura } = obterDimensoesDaTela();
+    atualizarTamanhoDaFonte(altura);
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    carregarLayout();  // Garante que o layout seja ajustado no carregamento
+});
+
+let debounce;
+function aoRedimensionar() {
+    clearTimeout(debounce);
+    debounce = setTimeout(function () {
+        carregarLayout(); 
+    }, 16); 
+}
+window.addEventListener('resize', aoRedimensionar);
+
+/* ************* */
+
 const elementoTabuleiro = document.getElementById('tabuleiro');
 const elementoRaquete = document.getElementById('raquete');
 const elementoBola = document.getElementById('bola');
@@ -17,27 +62,6 @@ console.log(`Raquete\n\tLargura: \t${dimensoesRaquete.largura}px \n\tAltura: \t$
 console.log(`Bola\n\tLargura: \t${dimensoesBola.largura}px \n\tAltura: \t${dimensoesBola.altura}px`);
 
 
-function obterDimensoesDaTela() {
-    let largura = window.innerWidth;
-    let altura = window.innerHeight;
-
-    console.log(
-        'Tela:\n' +
-        '\tLargura: \t' + largura + 'px\n' +
-        '\tAltura: \t' + altura + 'px'
-    )
-
-    return { largura, altura };
-}
-
-const ALTURA_REFERENCIA = 766;
-function atualizarTamanhoDaFonte(altura) {
-    let tamanhoDaFonte = Math.floor((16 * altura) / ALTURA_REFERENCIA);
-    document.documentElement.style.setProperty('--font-size', tamanhoDaFonte + 'px');
-
-    console.log('Fonte: ' + tamanhoDaFonte);
-}
-
 function iniciar_jogo() {
     controlarBotao();
 }
@@ -47,28 +71,3 @@ function controlarBotao() {
     elementoBotao.style.display = 'none';
 
 }
-
-let ultimaAltura = window.innerHeight;
-function carregarLayout() {
-    // Destructuring para pegar a altura
-    const { altura } = obterDimensoesDaTela();
-    // Verifica se a altura mudou antes de recalcular o layout
-    if (altura !== ultimaAltura) {
-        // Passar altura como argumento para a função atualizarTamanhoDaFonte
-        atualizarTamanhoDaFonte(altura);
-        ultimaAltura = altura; // Atualiza a última altura registrada
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    carregarLayout();  // Garante que o layout seja ajustado no carregamento
-});
-
-let debounce;
-function aoRedimensionar() {
-    clearTimeout(debounce);
-    debounce = setTimeout(function () {
-        carregarLayout(); // Função que recalcula o layout
-    }, 200); // Espera 200ms após o redimensionamento parar para chamar a função
-}
-window.addEventListener('resize', aoRedimensionar);
