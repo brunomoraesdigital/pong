@@ -46,18 +46,25 @@ function dimensoesDosElementos() {
 }
 
 function posicoesDosElementos() {
+    const { dimensoesTabuleiro, dimensoesRaquete, dimensoesBola } = dimensoesDosElementos();
+
+    const posicaoDoTabuleiroX = elementoTabuleiro.offsetLeft;
+    const posicaoDoTabuleiroY = posicaoDoTabuleiroX + dimensoesTabuleiro.largura;
+
+    /*console.log('Posição inicial/final do tabuleiro:');
+    console.log('X:', posicaoDoTabuleiroX, 'Y:', posicaoDoTabuleiroY);*/
+
+    const posicaoDaRaqueteX = elementoRaquete.offsetLeft;
+    const posicaoDaRaqueteY = posicaoDaRaqueteX + dimensoesRaquete.largura;
+
+    /*console.log('Posição inicial/final da raquete:');
+    console.log('X:', posicaoDaRaqueteX, 'Y:', posicaoDaRaqueteY);*/
+
     const posicaoDaBolaX = elementoBola.offsetLeft;
-    const { dimensoesBola, dimensoesRaquete } = dimensoesDosElementos();
     const posicaoDaBolaY = posicaoDaBolaX + dimensoesBola.largura;
 
     /*console.log('Posição inicial/final da bola:');
     console.log('X:', posicaoDaBolaX, 'Y:', posicaoDaBolaY);*/
-
-    const posicaoDaRaqueteX = elementoRaquete.offsetLeft;
-    const posicaoDaRaqueteY = posicaoDaRaqueteX + dimensoesRaquete.largura;
-    
-    /*console.log('Posição inicial/final da raquete:');
-    console.log('X:', posicaoDaRaqueteX, 'Y:', posicaoDaRaqueteY);*/
 
     return {
         posicaoDaBolaX,
@@ -108,37 +115,62 @@ function controlarBotao() {
 
 /* ====================================================== */
 // depuraçao
-/* ====================================================== */ 
+/* ====================================================== */
 
 let DEBUG = true;
 function depuracao() {
     if (DEBUG) {
-    const { largura, altura } = obterDimensoesDaTela();  // Obtenção de dimensões da tela
-    atualizarTamanhoDaFonte(altura);  // Atualização do tamanho da fonte com base na altura da tela
+        /* ============================= */
+        // Coleta de Dados Organizados
+        /* ============================= */
 
-    // Obtenção das dimensões dos elementos
-    const { dimensoesTabuleiro, dimensoesRaquete, dimensoesBola } = dimensoesDosElementos();
+        /* ------------------------------------------ */
+        // dimensões da tela
+        const { largura, altura } = obterDimensoesDaTela();
+        /* ------------------------------------------ */
+        // tamanho da fonte
+        atualizarTamanhoDaFonte(altura);
 
-    // Obtenção das posições dos elementos
-    const { posicaoDaBolaX, posicaoDaBolaY, posicaoDaRaqueteX, posicaoDaRaqueteY } = posicoesDosElementos();
+        /* ------------------------------------------ */
+        // dimensões dos elementos
+        const { dimensoesTabuleiro, dimensoesRaquete, dimensoesBola } = dimensoesDosElementos();
 
-    // Realizando os logs uma vez
-    console.log(
-        'Dimensões da Tela\n' +
-        '\tLargura:\t' + largura +
-        '\n\tAltura:\t\t' + altura
-    );
-    
-    console.log('Tamanho da Fonte: ' + Math.floor((FONT_REFERENCIA * altura) / ALTURA_REFERENCIA));
+        /* ------------------------------------------ */
+        // posições dos elementos
+        const { posicaoDoTabuleiroX, posicaoDoTabuleiroY, posicaoDaRaqueteX, posicaoDaRaqueteY, posicaoDaBolaX, posicaoDaBolaY } = posicoesDosElementos();
 
-    console.log(`Tabuleiro\n\tLargura: \t${dimensoesTabuleiro.largura}px \n\tAltura: \t${dimensoesTabuleiro.altura}px`);
-    console.log(`Raquete\n\tLargura: \t${dimensoesRaquete.largura}px \n\tAltura: \t${dimensoesRaquete.altura}px`);
-    console.log(`Bola\n\tLargura: \t${dimensoesBola.largura}px \n\tAltura: \t${dimensoesBola.altura}px`);
 
-    console.log('Posição inicial/final da bola:');
-    console.log('X:', posicaoDaBolaX, 'Y:', posicaoDaBolaY);
+        /* ============================= */
+        // Logs organizados para depuração
+        /* ============================= */
 
-    console.log('Posição inicial/final da raquete:');
-    console.log('X:', posicaoDaRaqueteX, 'Y:', posicaoDaRaqueteY);
-}}
-depuracao ();
+        /* ------------------------------------------ */
+        // Dimensões da tela 
+        console.log(
+            'Dimensões da Tela\n' +
+            '\tLargura:\t' + largura +
+            '\n\tAltura:\t\t' + altura
+        );
+        /* ------------------------------------------ */
+        // Tamanho da fonte
+        console.log('Tamanho da Fonte: ' + Math.floor((FONT_REFERENCIA * altura) / ALTURA_REFERENCIA));
+
+        /* ------------------------------------------ */
+        // Dimensões dos elementos
+        console.log(`Tabuleiro\n\tLargura: \t${dimensoesTabuleiro.largura}px \n\tAltura: \t${dimensoesTabuleiro.altura}px`);
+        console.log(`Raquete\n\tLargura: \t${dimensoesRaquete.largura}px \n\tAltura: \t${dimensoesRaquete.altura}px`);
+        console.log(`Bola\n\tLargura: \t${dimensoesBola.largura}px \n\tAltura: \t${dimensoesBola.altura}px`);
+
+        /* ------------------------------------------ */
+        // Posição dos elementos
+        console.log('Posição inicial/final da bola:');
+        console.log('X:', posicaoDaBolaX, 'Y:', posicaoDaBolaY);
+
+        console.log('Posição inicial/final da raquete:');
+        console.log('X:', posicaoDaRaqueteX, 'Y:', posicaoDaRaqueteY);
+
+        console.log('Posição inicial/final do tabuleiro:');
+        console.log('X:', posicaoDoTabuleiroX, 'Y:', posicaoDoTabuleiroY);
+    }
+}
+depuracao();
