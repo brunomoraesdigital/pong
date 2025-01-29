@@ -48,31 +48,58 @@ function dimensoesDosElementos() {
 function posicoesDosElementos() {
     const { dimensoesTabuleiro, dimensoesRaquete, dimensoesBola } = dimensoesDosElementos();
 
-    const posicaoDoTabuleiroX = elementoTabuleiro.offsetLeft;
-    const posicaoDoTabuleiroY = posicaoDoTabuleiroX + dimensoesTabuleiro.largura;
+    /* ------------------------------------------ */
+    // Posição do Tabuleiro
+    const posicao_x_inicialDoTabuleiro = elementoTabuleiro.offsetLeft;
+    const posicao_x_finalDoTabuleiro = posicao_x_inicialDoTabuleiro + dimensoesTabuleiro.largura;
+    const posicao_y_inicialDoTabuleiro = elementoTabuleiro.offsetTop;
+    const posicao_y_finalDoTabuleiro = posicao_y_inicialDoTabuleiro + dimensoesTabuleiro.altura;
 
-    /*console.log('Posição inicial/final do tabuleiro:');
-    console.log('X:', posicaoDoTabuleiroX, 'Y:', posicaoDoTabuleiroY);*/
+    // console.log('Posição horizontal(x) inicial/final do tabuleiro:');
+    // console.log('inicio:', posicao_x_inicialDoTabuleiro, 'fim:', posicao_x_finalDoTabuleiro);
+    // console.log('Posição vertical(y) inicial/final do tabuleiro:');
+    // console.log('inicio:', posicao_y_inicialDoTabuleiro, 'fim:', posicao_y_finalDoTabuleiro);
 
-    const posicaoDaRaqueteX = elementoRaquete.offsetLeft;
-    const posicaoDaRaqueteY = posicaoDaRaqueteX + dimensoesRaquete.largura;
+    /* ------------------------------------------ */
+    // Posição da Raquete
+    const posicao_x_inicialDaRaquete = elementoRaquete.offsetLeft;
+    const posicao_x_finalDaRaquete = posicao_x_inicialDaRaquete + dimensoesRaquete.largura;
+    const posicao_y_inicialDaRaquete = elementoRaquete.offsetTop;
+    const posicao_y_finalDaRaquete = posicao_y_inicialDaRaquete + dimensoesRaquete.altura;
 
-    /*console.log('Posição inicial/final da raquete:');
-    console.log('X:', posicaoDaRaqueteX, 'Y:', posicaoDaRaqueteY);*/
+    // console.log('Posição horizontal(x) inicial/final da raquete:');
+    // console.log('inicio:', posicao_x_inicialDaRaquete, 'fim:', posicao_x_finalDaRaquete);
+    // console.log('Posição vertical(y) inicial/final da raquete:');
+    // console.log('inicio:', posicao_y_inicialDaRaquete, 'fim:', posicao_y_finalDaRaquete);
 
-    const posicaoDaBolaX = elementoBola.offsetLeft;
-    const posicaoDaBolaY = posicaoDaBolaX + dimensoesBola.largura;
+    /* ------------------------------------------ */
+    // Posição da Bola
+    const posicao_x_inicialDaBola = elementoBola.offsetLeft;
+    const posicao_x_finalDaBola = posicao_x_inicialDaBola + dimensoesBola.largura;
+    const posicao_y_inicialDaBola = elementoBola.offsetTop;
+    const posicao_y_finalDaBola = posicao_y_inicialDaBola + dimensoesBola.altura;
 
-    /*console.log('Posição inicial/final da bola:');
-    console.log('X:', posicaoDaBolaX, 'Y:', posicaoDaBolaY);*/
+    // console.log('Posição horizontal(x) inicial/final da bola:');
+    // console.log('inicio:', posicao_x_inicialDaBola, 'fim:', posicao_x_finalDaBola);
+    // console.log('Posição vertical(y) inicial/final da bola:');
+    // console.log('inicio:', posicao_y_inicialDaBola, 'fim:', posicao_y_finalDaBola);
 
-    return {
-        posicaoDaBolaX,
-        posicaoDaBolaY,
-        posicaoDaRaqueteX,
-        posicaoDaRaqueteY
-    }
+    return { 
+        posicao_x_inicialDoTabuleiro,
+        posicao_x_finalDoTabuleiro,
+        posicao_y_inicialDoTabuleiro,
+        posicao_y_finalDoTabuleiro,
+        posicao_x_inicialDaRaquete,
+        posicao_x_finalDaRaquete,
+        posicao_y_inicialDaRaquete,
+        posicao_y_finalDaRaquete,
+        posicao_x_inicialDaBola,
+        posicao_x_finalDaBola,
+        posicao_y_inicialDaBola,
+        posicao_y_finalDaBola
+    };
 }
+
 
 
 function animarBola() {
@@ -112,9 +139,8 @@ function controlarBotao() {
     carregarLayout();
 }
 
-
 /* ====================================================== */
-// depuraçao
+// depuração
 /* ====================================================== */
 
 let DEBUG = true;
@@ -137,7 +163,11 @@ function depuracao() {
 
         /* ------------------------------------------ */
         // posições dos elementos
-        const { posicaoDoTabuleiroX, posicaoDoTabuleiroY, posicaoDaRaqueteX, posicaoDaRaqueteY, posicaoDaBolaX, posicaoDaBolaY } = posicoesDosElementos();
+        const { 
+            posicao_x_inicialDoTabuleiro, posicao_x_finalDoTabuleiro, posicao_y_inicialDoTabuleiro, posicao_y_finalDoTabuleiro, 
+            posicao_x_inicialDaRaquete, posicao_x_finalDaRaquete, posicao_y_inicialDaRaquete, posicao_y_finalDaRaquete,
+            posicao_x_inicialDaBola, posicao_x_finalDaBola, posicao_y_inicialDaBola, posicao_y_finalDaBola
+        } = posicoesDosElementos();
 
 
         /* ============================= */
@@ -163,14 +193,20 @@ function depuracao() {
 
         /* ------------------------------------------ */
         // Posição dos elementos
-        console.log('Posição inicial/final da bola:');
-        console.log('X:', posicaoDaBolaX, 'Y:', posicaoDaBolaY);
-
-        console.log('Posição inicial/final da raquete:');
-        console.log('X:', posicaoDaRaqueteX, 'Y:', posicaoDaRaqueteY);
-
-        console.log('Posição inicial/final do tabuleiro:');
-        console.log('X:', posicaoDoTabuleiroX, 'Y:', posicaoDoTabuleiroY);
+        console.log('Posição horizontal(x) inicial/final do tabuleiro:');
+        console.log('inicio:', posicao_x_inicialDoTabuleiro, 'fim:', posicao_x_finalDoTabuleiro);
+        console.log('Posição vertical(y) inicial/final do tabuleiro:');
+        console.log('inicio:', posicao_y_inicialDoTabuleiro, 'fim:', posicao_y_finalDoTabuleiro);
+        
+        console.log('Posição horizontal(x) inicial/final da raquete:');
+        console.log('inicio:', posicao_x_inicialDaRaquete, 'fim:', posicao_x_finalDaRaquete);
+        console.log('Posição vertical(y) inicial/final da raquete:');
+        console.log('inicio:', posicao_y_inicialDaRaquete, 'fim:', posicao_y_finalDaRaquete);
+        
+        console.log('Posição horizontal(x) inicial/final da bola:');
+        console.log('inicio:', posicao_x_inicialDaBola, 'fim:', posicao_x_finalDaBola);
+        console.log('Posição vertical(y) inicial/final da bola:');
+        console.log('inicio:', posicao_y_inicialDaBola, 'fim:', posicao_y_finalDaBola);
     }
 }
 depuracao();
