@@ -77,10 +77,10 @@ p {
 }
 
 .caixaDoJogo {
-  width: 90vw;
-  height: 65vh;
-  max-width: 30rem;
-  max-height: 40rem;
+  width: 90vw; 
+  height: 65vh; 
+  max-width: 350px; 
+  max-height: 500px;
   display: flex;
   flex-direction: column;
   /*background-color: burlywood;*/
@@ -180,23 +180,25 @@ p {
 }
 
 .raquete {
-  width: 6rem;
-  height: 1rem;
+  width: 100px; 
+  height: 16px;
+  border-radius: 2px;
   background-color: #ffffff;
   position: absolute;
+  background-color: green;
   bottom: 0px;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .bola {
-  width: 1rem;
-  height: 1rem;
+  width: 16px; 
+  height: 16px; 
   border-radius: 50%;
   background-color: #fff;
   position: absolute;
   background-color: red;
-  bottom: 1rem;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
 }
