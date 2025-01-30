@@ -42,67 +42,101 @@ function estabelecerLimitesDosTabuleiro() {
     return { limiteEsquerdo, limiteDireito, limiteTopo, limiteBase };
 }
 
-function obterPosicaoInicialDaBola() {
-    elementoBola.style.transform = 'translateX(0%)';
+function posicionarElementos() {
+    const { dimensoesTabuleiro, dimensoesRaquete, dimensoesBola } = dimensoesDosElementos();
 
-    let posicaoEsq = elementoBola.offsetLeft;
-    let posicaoTop = elementoBola.offsetTop;
+    let posicionarRaquete = (dimensoesTabuleiro.largura/2) - (dimensoesRaquete.largura/2);
+    let posicionarBola = (dimensoesTabuleiro.largura/2) - (dimensoesBola.largura/2);
 
-    console.log('posição esq da bola: ' + posicaoEsq);
-    console.log('posição top da bola: ' + posicaoTop);
+    elementoRaquete.style.left = posicionarRaquete + 'px';
+    elementoBola.style.left = posicionarBola + 'px';
 
-    contador++;
-    console.log(contador);
-
-    return { posicaoEsq, posicaoTop };
 
 }
 
 
-let velocidadeY = -2;
-let velocidadeX = -2;
+function obterPosicaoInicialDaBola() {
 
-function animarBola() {
+    let posBolaEsq = elementoBola.offsetLeft;
+    let posBolaTop = elementoBola.offsetTop;
+
+    return { posBolaEsq, posBolaTop };
+
+}
+
+function obterPosicaoInicialDaRaquete() {
+
+    let posRaqueteEsq = elementoRaquete.offsetLeft;
+    let posRaqueteTop = elementoRaquete.offsetTop;
+
+    return { posRaqueteEsq, posRaqueteTop };
+
+}
+
+let velocidadeBolaY = -2;
+let velocidadeBolaX = -2;
+let entrou = false;
+function controlarCenario() {
 
     const posicaoDaBola = obterPosicaoInicialDaBola();
+    const posicaoDaRaquete = obterPosicaoInicialDaRaquete();
     const limiteDoTabuleiro = estabelecerLimitesDosTabuleiro();
-    const { dimensoesBola } = dimensoesDosElementos();
+    const { dimensoesBola, dimensoesRaquete } = dimensoesDosElementos();
 
-    let posicaoY = posicaoDaBola.posicaoTop + velocidadeY;
-    let posicaoX = posicaoDaBola.posicaoEsq + velocidadeX;
+    let posicaoBolaY = posicaoDaBola.posBolaTop + velocidadeBolaY;
+    let posicaoBolaX = posicaoDaBola.posBolaEsq + velocidadeBolaX;
+    let posicaoRaqueteY = posicaoDaRaquete.posRaqueteTop;
+    let posicaoRaqueteX = posicaoDaRaquete.posRaqueteEsq;
 
-    if (posicaoY >= limiteDoTabuleiro.limiteTopo) {        
-        elementoBola.style.top = posicaoY + 'px';
+
+    
+
+
+    if (posicaoBolaY >= limiteDoTabuleiro.limiteTopo) {        
+        elementoBola.style.top = posicaoBolaY + 'px';
 
     } else {
-        velocidadeY = -velocidadeY; 
+        velocidadeBolaY = -velocidadeBolaY; 
     }
 
-    if (posicaoX >= limiteDoTabuleiro.limiteEsquerdo && posicaoX <= limiteDoTabuleiro.limiteDireito - dimensoesBola.largura) {
-        elementoBola.style.left = posicaoX + 'px';
+    if (posicaoBolaX >= limiteDoTabuleiro.limiteEsquerdo && posicaoBolaX+dimensoesBola.largura <= limiteDoTabuleiro.limiteDireito) {
+        elementoBola.style.left = posicaoBolaX + 'px';
 
     } else {
-        velocidadeX = -velocidadeX; 
+        velocidadeBolaX = -velocidadeBolaX; 
     }
 
-    if (posicaoY >= limiteDoTabuleiro.limiteBase - dimensoesBola.altura) {
-        velocidadeX = 0;
-        velocidadeY = 0;
+    if (posicaoBolaY + dimensoesBola.altura >= limiteDoTabuleiro.limiteBase) {
+        velocidadeBolaX = 0;
+        velocidadeBolaY = 0;
+        if (!entrou) {
+            entrou = true;
+            console.log('não colidiu com a raquete');
+            console.log('Raquete: Esq ' + posicaoRaqueteX + ' bola ' + posicaoBolaX + '/' + (posicaoBolaX + dimensoesBola.largura) + ' ld dir ' + (posicaoRaqueteX + dimensoesRaquete.largura));
+        }
     }
 
+    if (posicaoBolaY + dimensoesBola.altura >= posicaoRaqueteY && 
+        posicaoBolaX + dimensoesBola.largura >= posicaoRaqueteX &&
+        posicaoBolaX <= posicaoRaqueteX + dimensoesRaquete.largura
+    ) {
+        console.log('colidiu com a raquete');
+        velocidadeBolaY = -velocidadeBolaY; 
+        console.log('Raquete: Esq ' + posicaoRaqueteX + ' bola ' + posicaoBolaX + '/' + (posicaoBolaX + dimensoesBola.largura) + ' ld dir ' + (posicaoRaqueteX + dimensoesRaquete.largura));
+    }    
 }
-
-//animarBola();
-setInterval(animarBola, 16);
+//controlarCenario();
+setInterval(controlarCenario, 16);
 
 
 function carregarLayout() {
     const { altura } = obterDimensoesDaTela();
     atualizarTamanhoDaFonte(altura);
     dimensoesDosElementos();
+    posicionarElementos();
 
     depuracao();
-}
+} 
 
 document.addEventListener('DOMContentLoaded', function () {
     carregarLayout();
@@ -130,7 +164,7 @@ function controlarBotao() {
 // depuração
 /* ====================================================== */
 
-let DEBUG = true;
+let DEBUG = false;
 function depuracao() {
     if (DEBUG) {
         /* ============================= */

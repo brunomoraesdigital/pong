@@ -186,9 +186,8 @@ p {
   background-color: #ffffff;
   position: absolute;
   background-color: green;
-  bottom: 0px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 0;
+  left: 0;
 }
 
 .bola {
@@ -199,6 +198,6 @@ p {
   position: absolute;
   background-color: red;
   bottom: 16px;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+
 }
