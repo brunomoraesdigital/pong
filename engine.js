@@ -30,19 +30,71 @@ function dimensoesDosElementos() {
 
     return { dimensoesTabuleiro, dimensoesRaquete, dimensoesBola };
 }
+let contador = 0;
+function estabelecerLimitesDosTabuleiro() {
+    const { dimensoesTabuleiro } = dimensoesDosElementos();
 
-let velocidade = 2;
-let velocidadeX = velocidade;
-let velocidadeY = velocidade;
+    limiteEsquerdo = 0;
+    limiteDireito = dimensoesTabuleiro.largura;
+    limiteTopo = 0;
+    limiteBase = dimensoesTabuleiro.altura;
+
+    return { limiteEsquerdo, limiteDireito, limiteTopo, limiteBase };
+}
+
+function obterPosicaoInicialDaBola() {
+    elementoBola.style.transform = 'translateX(0%)';
+
+    let posicaoEsq = elementoBola.offsetLeft;
+    let posicaoTop = elementoBola.offsetTop;
+
+    console.log('posição esq da bola: ' + posicaoEsq);
+    console.log('posição top da bola: ' + posicaoTop);
+
+    contador++;
+    console.log(contador);
+
+    return { posicaoEsq, posicaoTop };
+
+}
+
+
+let velocidadeY = -2;
+let velocidadeX = -2;
 
 function animarBola() {
 
-    
-    //elementoBola.style.left = 0+8 + 'px'; esquerdo
-    //elementoBola.style.left = 348-8 + 'px'; direito
-    elementoBola.style.left = 348-8 + 'px';
+    const posicaoDaBola = obterPosicaoInicialDaBola();
+    const limiteDoTabuleiro = estabelecerLimitesDosTabuleiro();
+    const { dimensoesBola } = dimensoesDosElementos();
+
+    let posicaoY = posicaoDaBola.posicaoTop + velocidadeY;
+    let posicaoX = posicaoDaBola.posicaoEsq + velocidadeX;
+
+    if (posicaoY >= limiteDoTabuleiro.limiteTopo) {        
+        elementoBola.style.top = posicaoY + 'px';
+
+    } else {
+        velocidadeY = -velocidadeY; 
+    }
+
+    if (posicaoX >= limiteDoTabuleiro.limiteEsquerdo && posicaoX <= limiteDoTabuleiro.limiteDireito - dimensoesBola.largura) {
+        elementoBola.style.left = posicaoX + 'px';
+
+    } else {
+        velocidadeX = -velocidadeX; 
+    }
+
+    if (posicaoY >= limiteDoTabuleiro.limiteBase - dimensoesBola.altura) {
+        velocidadeX = 0;
+        velocidadeY = 0;
+    }
+
 }
-animarBola();
+
+//animarBola();
+setInterval(animarBola, 16);
+
 
 function carregarLayout() {
     const { altura } = obterDimensoesDaTela();
@@ -98,6 +150,7 @@ function depuracao() {
 
         /* ------------------------------------------ */
         // 
+        const { limiteEsquerdo, limiteDireito, limiteTopo, limiteBase } = estabelecerLimitesDosTabuleiro();
 
         /* ============================= */
         // Logs organizados para depuração
@@ -122,6 +175,11 @@ function depuracao() {
 
         /* ------------------------------------------ */
         // 
+        console.log('Limites do Tabuleiro:');
+        console.log('\tEsquerda:', limiteEsquerdo);
+        console.log('\tDireita:', limiteDireito);
+        console.log('\tTopo:', limiteTopo);
+        console.log('\tBase:', limiteBase);
     }
 }
 
