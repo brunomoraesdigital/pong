@@ -155,7 +155,7 @@ p {
   border: 0.125rwm solid #fff;
   padding: 0.75rem 1.25rem;
   font-family: "Press Start 2P", serif;
-  font-size: 0.5rem;
+  font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.125rem;
   cursor: pointer;
@@ -199,5 +199,22 @@ p {
   background-color: red;
   bottom: 16px;
   left: 0;
+}
 
+#temporizadorReinicio {
+  font-family: "Press Start 2P", serif;
+  font-size: 4rem;
+  font-weight: bold;
+  transition: opacity 0.5s ease, filter 0.5s ease;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+  display: none;
+}
+
+.desfocado {
+  opacity: 0;
+  filter: blur(10px);
 }
