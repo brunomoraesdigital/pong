@@ -32,8 +32,6 @@ function dimensoesDosElementos() {
     return { dimensoesTabuleiro, dimensoesRaquete, dimensoesBola };
 }
 
-let contador = 0;
-
 function estabelecerLimitesDosTabuleiro() {
     const { dimensoesTabuleiro } = dimensoesDosElementos();
 
@@ -132,7 +130,12 @@ function executarJogo() {
 
     setInterval(controlarCenario, 1/*16*/);
 }
+function xxxxx() {
+    const elementoVidas = document.getElementById('vidas');
+    let contadorDeVidas = 5;
 
+    
+}
 function reiniciarPartida() {
     const elementoTemporizador = document.getElementById('temporizador');
     let contadorDoTemporizador = 5;
@@ -168,8 +171,21 @@ function reiniciarPartida() {
 }
 function reiniciarJogo() {
     console.log('O jogo será reiniciado!');
-    // Aqui você pode redefinir posições e estados da bola, raquete, etc.
+    // redefinir posições e estados da bola, raquete, etc.
+
+    // Reseta a posição dos elementos
     posicionarElementos();
+    // Restaura a velocidade da bola
+    velocidadeBolaX = (Math.random() > 0.5 ? 2 : -2); // escolhe um direção aleátoria para a bolinha reiniciar
+    velocidadeBolaY = -2;
+    // restaura status do jogo
+    perdeu = false;
+    // Interrompe o loop anterior antes de iniciar um novo
+    if (intervaloJogo) {
+        clearInterval(intervaloJogo);
+    }
+    // Reinicia o jogo chamando a função de controle
+    executarJogo();
 }
 
 function carregarLayout() {
