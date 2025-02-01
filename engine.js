@@ -7,6 +7,7 @@ function obterDimensoesDaTela() {
 
 const ALTURA_REFERENCIA = 914;
 const FONT_REFERENCIA = 16;
+
 function atualizarTamanhoDaFonte(altura) {
     let tamanhoDaFonte = Math.floor((FONT_REFERENCIA * altura) / ALTURA_REFERENCIA);
     document.documentElement.style.setProperty('--font-size', tamanhoDaFonte + 'px');
@@ -30,7 +31,9 @@ function dimensoesDosElementos() {
 
     return { dimensoesTabuleiro, dimensoesRaquete, dimensoesBola };
 }
+
 let contador = 0;
+
 function estabelecerLimitesDosTabuleiro() {
     const { dimensoesTabuleiro } = dimensoesDosElementos();
 
@@ -45,89 +48,129 @@ function estabelecerLimitesDosTabuleiro() {
 function posicionarElementos() {
     const { dimensoesTabuleiro, dimensoesRaquete, dimensoesBola } = dimensoesDosElementos();
 
-    let posicionarRaquete = (dimensoesTabuleiro.largura/2) - (dimensoesRaquete.largura/2);
-    let posicionarBola = (dimensoesTabuleiro.largura/2) - (dimensoesBola.largura/2);
+    let posicionarRaquete = (dimensoesTabuleiro.largura / 2) - (dimensoesRaquete.largura / 2);
+    let posicionarBola = (dimensoesTabuleiro.largura / 2) - (dimensoesBola.largura / 2);
+    let posicionarBolaVertical = (dimensoesTabuleiro.altura) - (dimensoesBola.altura * 2) - 2;
 
     elementoRaquete.style.left = posicionarRaquete + 'px';
     elementoBola.style.left = posicionarBola + 'px';
-
-
+    elementoBola.style.top = posicionarBolaVertical + 'px';
 }
 
-
 function obterPosicaoInicialDaBola() {
-
     let posBolaEsq = elementoBola.offsetLeft;
     let posBolaTop = elementoBola.offsetTop;
 
     return { posBolaEsq, posBolaTop };
-
 }
 
 function obterPosicaoInicialDaRaquete() {
-
     let posRaqueteEsq = elementoRaquete.offsetLeft;
     let posRaqueteTop = elementoRaquete.offsetTop;
 
     return { posRaqueteEsq, posRaqueteTop };
-
 }
 
 let velocidadeBolaY = -2;
 let velocidadeBolaX = -2;
-let entrou = false;
-function controlarCenario() {
+let perdeu = false;
 
-    const posicaoDaBola = obterPosicaoInicialDaBola();
-    const posicaoDaRaquete = obterPosicaoInicialDaRaquete();
-    const limiteDoTabuleiro = estabelecerLimitesDosTabuleiro();
-    const { dimensoesBola, dimensoesRaquete } = dimensoesDosElementos();
+function executarJogo() {
+    function controlarCenario() {
+        const posicaoDaBola = obterPosicaoInicialDaBola();
+        const posicaoDaRaquete = obterPosicaoInicialDaRaquete();
+        const limiteDoTabuleiro = estabelecerLimitesDosTabuleiro();
+        const { dimensoesBola, dimensoesRaquete } = dimensoesDosElementos();
 
-    let posicaoBolaY = posicaoDaBola.posBolaTop + velocidadeBolaY;
-    let posicaoBolaX = posicaoDaBola.posBolaEsq + velocidadeBolaX;
-    let posicaoRaqueteY = posicaoDaRaquete.posRaqueteTop;
-    let posicaoRaqueteX = posicaoDaRaquete.posRaqueteEsq;
+        let posicaoBolaY = posicaoDaBola.posBolaTop + velocidadeBolaY;
+        let posicaoBolaX = posicaoDaBola.posBolaEsq + velocidadeBolaX;
+        let posicaoRaqueteY = posicaoDaRaquete.posRaqueteTop;
+        let posicaoRaqueteX = posicaoDaRaquete.posRaqueteEsq;
 
+        if (posicaoBolaY >= limiteDoTabuleiro.limiteTopo) {
+            elementoBola.style.top = posicaoBolaY + 'px';
+        } else {
+            velocidadeBolaY = -velocidadeBolaY;
+        }
 
-    
+        if (
+            posicaoBolaX >= limiteDoTabuleiro.limiteEsquerdo &&
+            posicaoBolaX + dimensoesBola.largura <= limiteDoTabuleiro.limiteDireito
+        ) {
+            elementoBola.style.left = posicaoBolaX + 'px';
+        } else {
+            velocidadeBolaX = -velocidadeBolaX;
+        }
 
+        if (posicaoBolaY + dimensoesBola.altura >= limiteDoTabuleiro.limiteBase) {
+            velocidadeBolaX = 0;
+            velocidadeBolaY = 0;
+            if (!perdeu) {
+                perdeu = true;
+                console.log('não colidiu com a raquete');
+                /*console.log(
+                    'Raquete: Esq ' + posicaoRaqueteX + ' bola ' + posicaoBolaX + '/' +
+                    (posicaoBolaX + dimensoesBola.largura) + ' ld dir ' + (posicaoRaqueteX + dimensoesRaquete.largura)
+                );*/
+                reiniciarPartida()
+            }
+        }
 
-    if (posicaoBolaY >= limiteDoTabuleiro.limiteTopo) {        
-        elementoBola.style.top = posicaoBolaY + 'px';
-
-    } else {
-        velocidadeBolaY = -velocidadeBolaY; 
-    }
-
-    if (posicaoBolaX >= limiteDoTabuleiro.limiteEsquerdo && posicaoBolaX+dimensoesBola.largura <= limiteDoTabuleiro.limiteDireito) {
-        elementoBola.style.left = posicaoBolaX + 'px';
-
-    } else {
-        velocidadeBolaX = -velocidadeBolaX; 
-    }
-
-    if (posicaoBolaY + dimensoesBola.altura >= limiteDoTabuleiro.limiteBase) {
-        velocidadeBolaX = 0;
-        velocidadeBolaY = 0;
-        if (!entrou) {
-            entrou = true;
-            console.log('não colidiu com a raquete');
-            console.log('Raquete: Esq ' + posicaoRaqueteX + ' bola ' + posicaoBolaX + '/' + (posicaoBolaX + dimensoesBola.largura) + ' ld dir ' + (posicaoRaqueteX + dimensoesRaquete.largura));
+        if (
+            posicaoBolaY + dimensoesBola.altura >= posicaoRaqueteY &&
+            posicaoBolaX + dimensoesBola.largura >= posicaoRaqueteX &&
+            posicaoBolaX <= posicaoRaqueteX + dimensoesRaquete.largura
+        ) {
+            console.log('colidiu com a raquete');
+            velocidadeBolaY = -velocidadeBolaY;
+            /*console.log(
+                'Raquete: Esq ' + posicaoRaqueteX + ' bola ' + posicaoBolaX + '/' +
+                (posicaoBolaX + dimensoesBola.largura) + ' ld dir ' + (posicaoRaqueteX + dimensoesRaquete.largura)
+            );*/
         }
     }
 
-    if (posicaoBolaY + dimensoesBola.altura >= posicaoRaqueteY && 
-        posicaoBolaX + dimensoesBola.largura >= posicaoRaqueteX &&
-        posicaoBolaX <= posicaoRaqueteX + dimensoesRaquete.largura
-    ) {
-        console.log('colidiu com a raquete');
-        velocidadeBolaY = -velocidadeBolaY; 
-        console.log('Raquete: Esq ' + posicaoRaqueteX + ' bola ' + posicaoBolaX + '/' + (posicaoBolaX + dimensoesBola.largura) + ' ld dir ' + (posicaoRaqueteX + dimensoesRaquete.largura));
-    }    
+    setInterval(controlarCenario, 1/*16*/);
 }
-//controlarCenario();
-setInterval(controlarCenario, 16);
 
+function reiniciarPartida() {
+    const elementoTemporizador = document.getElementById('temporizador');
+    let contadorDoTemporizador = 5;
+
+    elementoTemporizador.style.display = 'block';
+    elementoTemporizador.classList.remove('desfocado');
+
+    const intervalo = setInterval(atualizarTemporizador, 1000);
+
+    function atualizarTemporizador() {
+        if (contadorDoTemporizador > 1) {
+            contadorDoTemporizador--;
+            elementoTemporizador.textContent = contadorDoTemporizador;
+            elementoTemporizador.classList.add('desfocado');
+
+            setTimeout(removerDesfoque, 500);
+        } else {
+            clearInterval(intervalo);
+            elementoTemporizador.textContent = 'VAI!';
+            elementoTemporizador.classList.remove('desfocado');
+
+            setTimeout(finalizarTemporizador, 1000);
+        }
+    }
+    function removerDesfoque() {
+        elementoTemporizador.classList.remove('desfocado');
+    }
+
+    function finalizarTemporizador() {
+        elementoTemporizador.style.display = 'none';
+        reiniciarJogo();
+    }
+}
+function reiniciarJogo() {
+    console.log('O jogo será reiniciado!');
+    // Aqui você pode redefinir posições e estados da bola, raquete, etc.
+    posicionarElementos();
+}
 
 function carregarLayout() {
     const { altura } = obterDimensoesDaTela();
@@ -136,7 +179,7 @@ function carregarLayout() {
     posicionarElementos();
 
     depuracao();
-} 
+}
 
 document.addEventListener('DOMContentLoaded', function () {
     carregarLayout();
@@ -149,14 +192,17 @@ function aoRedimensionar() {
         carregarLayout();
     }, 16);
 }
+
 window.addEventListener('resize', aoRedimensionar);
 
 function iniciar_jogo() {
     controlarBotao();
+    executarJogo();
 }
 
 function controlarBotao() {
-    carregarLayout();
+    const elementoBotao = document.getElementById('botao');
+    elementoBotao.style.display = 'none';
 }
 
 
