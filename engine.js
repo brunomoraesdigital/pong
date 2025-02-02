@@ -71,7 +71,9 @@ function obterPosicaoInicialDaRaquete() {
 
 let velocidadeBolaY = -2;
 let velocidadeBolaX = -2;
+let intervaloJogo;
 let perdeu = false;
+let contadorDePerdeu = 0;
 
 function executarJogo() {
     function controlarCenario() {
@@ -103,14 +105,19 @@ function executarJogo() {
         if (posicaoBolaY + dimensoesBola.altura >= limiteDoTabuleiro.limiteBase) {
             velocidadeBolaX = 0;
             velocidadeBolaY = 0;
-            if (!perdeu) {
+            if (!perdeu && contadorDePerdeu <= 3) {
                 perdeu = true;
+                contadorDePerdeu++;
+                
+                perderVida();
+
                 console.log('não colidiu com a raquete');
+                console.log(contadorDePerdeu);
                 /*console.log(
                     'Raquete: Esq ' + posicaoRaqueteX + ' bola ' + posicaoBolaX + '/' +
                     (posicaoBolaX + dimensoesBola.largura) + ' ld dir ' + (posicaoRaqueteX + dimensoesRaquete.largura)
                 );*/
-                reiniciarPartida()
+                reiniciarPartida();
             }
         }
 
@@ -128,20 +135,39 @@ function executarJogo() {
         }
     }
 
-    setInterval(controlarCenario, 1/*16*/);
+    intervaloJogo = setInterval(controlarCenario, 16);
 }
-function xxxxx() {
-    const elementoVidas = document.getElementById('vidas');
-    let contadorDeVidas = 5;
 
+
+function perderVida() {
+    let vidas = document.querySelectorAll("#vidas span");
     
+    for (let i = vidas.length - 1; i >= 0; i--) {
+        if (!vidas[i].classList.contains("vidaPerdida")) {
+            vidas[i].classList.add("vidaPerdida");
+            break;
+        }
+    }
 }
+
+function recuperarVida() {
+    let vidas = document.querySelectorAll("#vidas span");
+    
+    for (let i = 0; i < vidas.length; i++) {
+        if (vidas[i].classList.contains("vidaPerdida")) {
+            vidas[i].classList.remove("vidaPerdida");
+            break;
+        }
+    }
+}
+
 function reiniciarPartida() {
     const elementoTemporizador = document.getElementById('temporizador');
     let contadorDoTemporizador = 5;
 
     elementoTemporizador.style.display = 'block';
     elementoTemporizador.classList.remove('desfocado');
+    elementoTemporizador.textContent = contadorDoTemporizador;
 
     const intervalo = setInterval(atualizarTemporizador, 1000);
 
@@ -169,6 +195,7 @@ function reiniciarPartida() {
         reiniciarJogo();
     }
 }
+
 function reiniciarJogo() {
     console.log('O jogo será reiniciado!');
     // redefinir posições e estados da bola, raquete, etc.
@@ -186,6 +213,7 @@ function reiniciarJogo() {
     }
     // Reinicia o jogo chamando a função de controle
     executarJogo();
+    console.log('Jogo reiniciado!');
 }
 
 function carregarLayout() {
