@@ -5,7 +5,7 @@
 }
 
 :root {
-  --font-size: 16px;
+  --tamanho-da-fonte: 16px;
   transition: font-size 0.3s ease;
 }
 
@@ -13,7 +13,7 @@
 html {
   width: 100vw;
   height: 100vh;
-  font-size: var(--font-size);
+  font-size: var(--tamanho-da-fonte);
 }
 
 body {
