@@ -1,4 +1,4 @@
-// Função para obter as dimensões atuais da tela
+// Etapa 01 - Função para obter as dimensões atuais da tela
 function obterDimensoesDaTela() {
     return {
         largura: window.innerWidth,
@@ -6,11 +6,10 @@ function obterDimensoesDaTela() {
     };
 }
 
-// Constantes de referência para o cálculo proporcional
+// Constantes de referência para o cálculo proporcional 
 const ALTURA_REFERENCIA = 914;
 const FONTE_REFERENCIA = 16;
-
-// Função para atualizar o tamanho da fonte com base na altura da tela
+// Etapa 02 - Função para atualizar o tamanho da fonte com base na altura da tela
 function atualizartamanhoDaFonte(alturaTela) {
     // Calcula o tamanho da fonte proporcional
     const tamanhoDaFonte = Math.floor((FONTE_REFERENCIA * alturaTela) / ALTURA_REFERENCIA);
@@ -46,11 +45,25 @@ window.addEventListener('resize', debounce(aoRedimensionar, 100));
 })();
 
 
+// Função modificada para usar valores diretos
+function aoRedimensionar() {
+    const dimensoes = obterDimensoesDaTela();
+    const tamanhoFonte = atualizarTamanhoDaFonte(dimensoes.altura); // Pegando valor direto da função
+    
+    atualizarDebug(dimensoes, tamanhoFonte);
+}
+
+// Modifique a função de atualização para retornar o valor
+function atualizarTamanhoDaFonte(alturaTela) {
+    const tamanhoDaFonte = Math.floor((FONTE_REFERENCIA * alturaTela) / ALTURA_REFERENCIA);
+    document.documentElement.style.setProperty('--tamanho-da-fonte', `${tamanhoDaFonte}px`);
+    return tamanhoDaFonte; // Agora retorna o valor calculado
+}
+
+
 /* --------- */
 /* DEPURAÇÃO */
 /* --------- */
-
-
 
 function criarPainelDebug() {
     const debugDiv = document.createElement('div');
