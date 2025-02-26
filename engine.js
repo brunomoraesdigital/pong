@@ -35,8 +35,8 @@ window.addEventListener('resize', debounce(aoRedimensionar, 100));
 
 (function inicializar() {
     aoRedimensionar();
-    // Se não usar a função de depuração, comente ou remova a chamada abaixo.
-    // depuracao();
+    // Se não utilizar a função de depuração, remova a chamada abaixo.
+    // atualizarDebug(...);
 })();
 
 /********************
@@ -60,75 +60,78 @@ function atualizarDebug(dimensoes, tamanhoFonteCalculado) {
 }
 
 /********************
- * SONS DO JOGO     *
+ * GERENCIADOR DE SOM *
  ********************/
-var somRaquete = new Audio('./recursos/somRaquete.mp3');
-somRaquete.preload = 'auto';
-somRaquete.load();
+var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+var audioBuffers = {};
 
-var somParede = new Audio('./recursos/somParede.mp3');
-somParede.preload = 'auto';
-somParede.load();
+function carregarSom(nome, url) {
+    var request = new XMLHttpRequest();
+    request.open('GET', url, true);
+    request.responseType = 'arraybuffer';
+    request.onload = function () {
+        audioContext.decodeAudioData(request.response, function (buffer) {
+            audioBuffers[nome] = buffer;
+        }, function (error) {
+            console.error('Erro ao decodificar áudio: ' + nome, error);
+        });
+    };
+    request.send();
+}
 
-var somBase = new Audio('./recursos/somBase.mp3');
-somBase.preload = 'auto';
-somBase.load();
+function tocarSom(nome) {
+    if (!audioBuffers[nome]) {
+        return;
+    }
+    var source = audioContext.createBufferSource();
+    source.buffer = audioBuffers[nome];
+    source.connect(audioContext.destination);
+    source.start(0);
+}
 
-var somExtraVida = new Audio('./recursos/somExtraVida.mp3');
-somExtraVida.preload = 'auto';
-somExtraVida.load();
-
-var somLevelUp = new Audio('./recursos/somLevelUp.mp3');
-somLevelUp.preload = 'auto';
-somLevelUp.load();
-
-var somGameOver = new Audio('./recursos/somGameOver.mp3');
-somGameOver.preload = 'auto';
-somGameOver.load();
+// Carregar os sons (confirme que os arquivos estão na pasta "recursos" e com os nomes corretos)
+carregarSom("raquete", "./recursos/somRaquete.mp3");
+carregarSom("parede", "./recursos/somParede.mp3");
+carregarSom("base", "./recursos/somBase.mp3");
+carregarSom("extraVida", "./recursos/somExtraVida.mp3");
+carregarSom("levelUp", "./recursos/somLevelUp.mp3");
+carregarSom("gameOver", "./recursos/somGameOver.mp3");
 
 /********************
  * VARIÁVEIS DO JOGO *
  ********************/
-// Elementos do jogo
 var tabuleiro = document.getElementById('tabuleiro');
 var raquete = document.getElementById('raquete');
 var bola = document.getElementById('bola');
 var botao = document.getElementById('botao');
 
-// Elementos da interface
 var contadorPontos = document.getElementById('contadorPontos');
 var contadorRecorde = document.getElementById('contadorRecorde');
 var vidasEl = document.getElementById('vidas');
 var temporizadorEl = document.getElementById('temporizador');
 var nivelEl = document.getElementById('nomeNivel');
 
-// Dimensões do tabuleiro e da raquete
 var boardWidth = tabuleiro.offsetWidth;
 var boardHeight = tabuleiro.offsetHeight;
 var paddleWidth = raquete.offsetWidth;
 var paddleHeight = raquete.offsetHeight;
-var paddleX; // posição horizontal da raquete
+var paddleX;
 
-// Propriedades da bola
-var ballSize = bola.offsetWidth; // bola quadrada
-var ballX, ballY;                // posição (left e bottom)
-var ballSpeedX, ballSpeedY;      // velocidades nos eixos X e Y
+var ballSize = bola.offsetWidth;
+var ballX, ballY;
+var ballSpeedX, ballSpeedY;
 
-// Controle do loop
 var animationFrameId;
 var gameRunning = false;
 
-// Variáveis de pontuação, recorde, vidas e nível
 var score = 0;
 var highScore = 0;
 var lives = 5;
 var level = 1;
 
-// Para controlar os aumentos progressivos
 var lastSpeedIncreaseScore = 0;
 var lastLifeIncreaseScore = 0;
 
-// Variável para controle da contagem regressiva
 var countdownActive = false;
 
 /************************************
@@ -211,20 +214,17 @@ function loopDoJogo() {
     if (ballX <= 0) {
         ballX = 0;
         ballSpeedX = -ballSpeedX;
-        somParede.currentTime = 0;
-        somParede.play();
+        tocarSom("parede");
     } else if (ballX + ballSize >= boardWidth) {
         ballX = boardWidth - ballSize;
         ballSpeedX = -ballSpeedX;
-        somParede.currentTime = 0;
-        somParede.play();
+        tocarSom("parede");
     }
 
     if (ballY + ballSize >= boardHeight) {
         ballY = boardHeight - ballSize;
         ballSpeedY = -ballSpeedY;
-        somParede.currentTime = 0;
-        somParede.play();
+        tocarSom("parede");
     }
 
     // Verifica colisão com a raquete
@@ -240,10 +240,9 @@ function loopDoJogo() {
             if (ballSpeedY < 0) {
                 ballSpeedY = -ballSpeedY;
             }
-            somRaquete.currentTime = 0;
-            somRaquete.play();
+            tocarSom("raquete");
 
-            score += 10;
+            score += 100;
             updateScoreDisplay();
 
             if (score > highScore) {
@@ -258,17 +257,15 @@ function loopDoJogo() {
                 lastSpeedIncreaseScore += 100;
                 level++;
                 updateLevelDisplay();
-                somLevelUp.currentTime = 0;
-                somLevelUp.play();
+                tocarSom("levelUp");
             }
 
-            // Ganha uma vida extra a cada 1000 pontos, somente se tiver menos de 5 vidas
+            // Ganha uma vida extra a cada 1000 pontos, se tiver menos de 5 vidas
             while (score - lastLifeIncreaseScore >= 1000) {
                 if (lives < 5) {
                     lives++;
                     updateLivesDisplay();
-                    somExtraVida.currentTime = 0;
-                    somExtraVida.play();
+                    tocarSom("extraVida");
                 } else {
                     break;
                 }
@@ -277,11 +274,9 @@ function loopDoJogo() {
         }
     }
 
-    // Se a bola tocar o fundo
     if (ballY < 0) {
         gameRunning = false;
-        somBase.currentTime = 0;
-        somBase.play();
+        tocarSom("base");
         ballX = paddleX + (paddleWidth - ballSize) / 2;
         ballY = paddleHeight + 10;
         atualizarPosicoes();
@@ -338,8 +333,7 @@ function fimDeJogo() {
     gameRunning = false;
     cancelAnimationFrame(animationFrameId);
     botao.style.display = 'block';
-    somGameOver.currentTime = 0;
-    somGameOver.play();
+    tocarSom("gameOver");
     alert('Fim de jogo! Sua pontuação: ' + score);
 }
 
