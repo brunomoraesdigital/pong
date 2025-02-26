@@ -62,38 +62,55 @@ function atualizarDebug(dimensoes, tamanhoFonteCalculado) {
 /********************
  * SONS DO JOGO     *
  ********************/
-var somRaquete    = new Audio('recursos/somRaquete.mp3');    // ao colidir bola/raquete
-var somParede     = new Audio('recursos/somParede.mp3');     // ao colidir com paredes (esq, dir, topo)
-var somBase       = new Audio('recursos/somBase.mp3');       // ao tocar a base
-var somExtraVida  = new Audio('recursos/somExtraVida.mp3');  // ao ganhar vida extra
-var somLevelUp    = new Audio('recursos/somLevelUp.mp3');    // ao subir de nível
-var somGameOver   = new Audio('recursos/somGameOver.mp3');   // game over
+var somRaquete = new Audio('./recursos/somRaquete.mp3');
+somRaquete.preload = 'auto';
+somRaquete.load();
+
+var somParede = new Audio('./recursos/somParede.mp3');
+somParede.preload = 'auto';
+somParede.load();
+
+var somBase = new Audio('./recursos/somBase.mp3');
+somBase.preload = 'auto';
+somBase.load();
+
+var somExtraVida = new Audio('./recursos/somExtraVida.mp3');
+somExtraVida.preload = 'auto';
+somExtraVida.load();
+
+var somLevelUp = new Audio('./recursos/somLevelUp.mp3');
+somLevelUp.preload = 'auto';
+somLevelUp.load();
+
+var somGameOver = new Audio('./recursos/somGameOver.mp3');
+somGameOver.preload = 'auto';
+somGameOver.load();
 
 /********************
  * VARIÁVEIS DO JOGO *
  ********************/
 // Elementos do jogo
 var tabuleiro = document.getElementById('tabuleiro');
-var raquete   = document.getElementById('raquete');
-var bola      = document.getElementById('bola');
-var botao     = document.getElementById('botao');
+var raquete = document.getElementById('raquete');
+var bola = document.getElementById('bola');
+var botao = document.getElementById('botao');
 
 // Elementos da interface
 var contadorPontos = document.getElementById('contadorPontos');
 var contadorRecorde = document.getElementById('contadorRecorde');
-var vidasEl        = document.getElementById('vidas');
+var vidasEl = document.getElementById('vidas');
 var temporizadorEl = document.getElementById('temporizador');
-var nivelEl        = document.getElementById('nomeNivel');
+var nivelEl = document.getElementById('nomeNivel');
 
 // Dimensões do tabuleiro e da raquete
-var boardWidth  = tabuleiro.offsetWidth;
+var boardWidth = tabuleiro.offsetWidth;
 var boardHeight = tabuleiro.offsetHeight;
-var paddleWidth  = raquete.offsetWidth;
+var paddleWidth = raquete.offsetWidth;
 var paddleHeight = raquete.offsetHeight;
 var paddleX; // posição horizontal da raquete
 
 // Propriedades da bola
-var ballSize    = bola.offsetWidth; // bola quadrada
+var ballSize = bola.offsetWidth; // bola quadrada
 var ballX, ballY;                // posição (left e bottom)
 var ballSpeedX, ballSpeedY;      // velocidades nos eixos X e Y
 
@@ -102,14 +119,14 @@ var animationFrameId;
 var gameRunning = false;
 
 // Variáveis de pontuação, recorde, vidas e nível
-var score    = 0;
+var score = 0;
 var highScore = 0;
-var lives    = 5;
-var level    = 1;
+var lives = 5;
+var level = 1;
 
 // Para controlar os aumentos progressivos
 var lastSpeedIncreaseScore = 0;
-var lastLifeIncreaseScore  = 0;
+var lastLifeIncreaseScore = 0;
 
 // Variável para controle da contagem regressiva
 var countdownActive = false;
@@ -159,7 +176,7 @@ function iniciar_jogo() {
     lastSpeedIncreaseScore = 0;
     lastLifeIncreaseScore = 0;
 
-    boardWidth  = tabuleiro.offsetWidth;
+    boardWidth = tabuleiro.offsetWidth;
     boardHeight = tabuleiro.offsetHeight;
 
     paddleX = (boardWidth - paddleWidth) / 2;
@@ -223,7 +240,6 @@ function loopDoJogo() {
             if (ballSpeedY < 0) {
                 ballSpeedY = -ballSpeedY;
             }
-            // Som ao colidir com a raquete
             somRaquete.currentTime = 0;
             somRaquete.play();
 
@@ -266,7 +282,6 @@ function loopDoJogo() {
         gameRunning = false;
         somBase.currentTime = 0;
         somBase.play();
-        // Reposiciona a bola para ficar presa à raquete
         ballX = paddleX + (paddleWidth - ballSize) / 2;
         ballY = paddleHeight + 10;
         atualizarPosicoes();
@@ -344,7 +359,6 @@ tabuleiro.addEventListener('touchmove', function (e) {
         paddleX = boardWidth - paddleWidth;
     }
     raquete.style.left = paddleX + 'px';
-    // Se a contagem regressiva estiver ativa, mantém a bola presa à raquete
     if (countdownActive) {
         ballX = paddleX + (paddleWidth - ballSize) / 2;
         ballY = paddleHeight + 10;
