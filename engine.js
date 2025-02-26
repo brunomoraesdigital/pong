@@ -20,7 +20,10 @@ function atualizarTamanhoDaFonte(alturaTela) {
 function aoRedimensionar() {
     var dimensoes = obterDimensoesDaTela();
     var tamanhoFonte = atualizarTamanhoDaFonte(dimensoes.altura);
-    atualizarDebug(dimensoes, tamanhoFonte);
+    
+    if (false) {
+      atualizarDebug(dimensoes, tamanhoFonte);
+    } 
 }
 
 function debounce(funcao, tempo) {
