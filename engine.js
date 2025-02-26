@@ -242,7 +242,7 @@ function loopDoJogo() {
             }
             tocarSom("raquete");
 
-            score += 100;
+            score += 10;
             updateScoreDisplay();
 
             if (score > highScore) {
