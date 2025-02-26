@@ -73,6 +73,7 @@ var contadorPontos = document.getElementById('contadorPontos');
 var contadorRecorde = document.getElementById('contadorRecorde');
 var vidasEl = document.getElementById('vidas');
 var temporizadorEl = document.getElementById('temporizador');
+var nivelEl = document.getElementById('nomeNivel');
 
 // Dimensões do tabuleiro e da raquete
 var boardWidth = tabuleiro.offsetWidth;
@@ -90,10 +91,11 @@ var ballSpeedX, ballSpeedY;      // velocidades nos eixos X e Y
 var animationFrameId;
 var gameRunning = false;
 
-// Variáveis de pontuação, recorde e vidas
+// Variáveis de pontuação, recorde, vidas e nível
 var score = 0;
 var highScore = 0;
 var lives = 5;
+var level = 1;
 
 // Para controlar os aumentos progressivos
 var lastSpeedIncreaseScore = 0;
@@ -125,14 +127,22 @@ function updateLivesDisplay() {
     }
 }
 
+function updateLevelDisplay() {
+    // Exibe o nível no formato "nivel-01", "nivel-02", etc.
+    var nivelTexto = 'nivel-' + (level < 10 ? '0' + level : level);
+    nivelEl.textContent = nivelTexto;
+}
+
 /************************************
  * CONTROLE DO JOGO                 *
  ************************************/
 function iniciar_jogo() {
     score = 0;
     lives = 5;
+    level = 1;
     updateScoreDisplay();
     updateLivesDisplay();
+    updateLevelDisplay();
 
     highScore = parseInt(localStorage.getItem('pongHighScore')) || 0;
     updateRecordDisplay();
@@ -146,7 +156,7 @@ function iniciar_jogo() {
     paddleX = (boardWidth - paddleWidth) / 2;
     raquete.style.left = paddleX + 'px';
 
-    // Lança a bola sempre a partir do centro da raquete
+    // A bola é lançada a partir do centro da raquete
     ballX = paddleX + (paddleWidth - ballSize) / 2;
     ballY = paddleHeight + 10;
 
@@ -209,10 +219,12 @@ function loopDoJogo() {
                 updateRecordDisplay();
             }
 
-            // Aumenta a velocidade a cada 100 pontos
+            // Aumenta a velocidade e o nível a cada 100 pontos
             while (score - lastSpeedIncreaseScore >= 100) {
                 increaseBallSpeed();
                 lastSpeedIncreaseScore += 100;
+                level++;
+                updateLevelDisplay();
             }
 
             // Ganha uma vida extra a cada 1000 pontos, somente se tiver menos de 5 vidas
@@ -228,10 +240,9 @@ function loopDoJogo() {
         }
     }
 
-    // Se a bola tocar o fundo
     if (ballY < 0) {
         gameRunning = false;
-        // Reposiciona a bola para que ela fique presa à raquete
+        // Reposiciona a bola para ficar presa à raquete
         ballX = paddleX + (paddleWidth - ballSize) / 2;
         ballY = paddleHeight + 10;
         atualizarPosicoes();
@@ -258,7 +269,6 @@ function increaseBallSpeed() {
 
 function iniciarCountdown() {
     countdownActive = true;
-    // Exibe o temporizador e faz a contagem regressiva de 3 segundos
     var countdown = 3;
     temporizadorEl.style.display = 'block';
     temporizadorEl.textContent = countdown;
