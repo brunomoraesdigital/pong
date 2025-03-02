@@ -8,18 +8,18 @@ function obterDimensoesDaTela() {
     };
 }
 
-var ALTURA_REFERENCIA = 914;
-var FONTE_REFERENCIA = 16;
+const ALTURA_REFERENCIA = 914;
+const FONTE_REFERENCIA = 16;
 
 function atualizarTamanhoDaFonte(alturaTela) {
-    var tamanhoDaFonte = Math.floor((FONTE_REFERENCIA * alturaTela) / ALTURA_REFERENCIA);
+    let tamanhoDaFonte = Math.floor((FONTE_REFERENCIA * alturaTela) / ALTURA_REFERENCIA);
     document.documentElement.style.setProperty('--tamanho-da-fonte', tamanhoDaFonte + 'px');
     return tamanhoDaFonte;
 }
 
 function aoRedimensionar() {
-    var dimensoes = obterDimensoesDaTela();
-    var tamanhoFonte = atualizarTamanhoDaFonte(dimensoes.altura);
+    let dimensoes = obterDimensoesDaTela();
+    let tamanhoFonte = atualizarTamanhoDaFonte(dimensoes.altura);
     
     if (false) {
       atualizarDebug(dimensoes, tamanhoFonte);
@@ -27,10 +27,10 @@ function aoRedimensionar() {
 }
 
 function debounce(funcao, tempo) {
-    var timeout;
+    let tempoEspera;
     return function () {
-        clearTimeout(timeout);
-        timeout = setTimeout(funcao, tempo);
+        clearTimeout(tempoEspera);
+        tempoEspera = setTimeout(funcao, tempo);
     };
 }
 
@@ -38,58 +38,36 @@ window.addEventListener('resize', debounce(aoRedimensionar, 100));
 
 (function inicializar() {
     aoRedimensionar();
-    // Se não utilizar a função de depuração, remova a chamada abaixo.
-    // atualizarDebug(...);
 })();
-
-/********************
- * FUNÇÕES DEBUG  *
- ********************/
-function criarPainelDebug() {
-    var debugDiv = document.createElement('div');
-    debugDiv.id = 'debug-painel';
-    debugDiv.style.cssText = 'position: fixed; bottom: 10px; left: 10px; background: rgba(0,0,0,0.7); color: red; padding: 10px; border-radius: 5px; font-family: monospace; z-index: 9999; font-size: 0.8rem;';
-    document.body.appendChild(debugDiv);
-    return debugDiv;
-}
-
-function atualizarDebug(dimensoes, tamanhoFonteCalculado) {
-    var debugDiv = document.getElementById('debug-painel') || criarPainelDebug();
-    debugDiv.innerHTML = 'Depuração:<br>' +
-        'Largura da Tela: ' + dimensoes.largura + 'px<br>' +
-        'Altura da Tela: ' + dimensoes.altura + 'px<br>' +
-        'Fonte Calculada: ' + tamanhoFonteCalculado + 'px<br>' +
-        'Fonte CSS Atual: ' + getComputedStyle(document.documentElement).getPropertyValue('--tamanho-da-fonte');
-}
 
 /********************
  * GERENCIADOR DE SOM *
  ********************/
-var audioContext = new (window.AudioContext || window.webkitAudioContext)();
-var audioBuffers = {};
+const contextoAudio = new (window.AudioContext || window.webkitAudioContext)();
+const buffersAudio = {};
 
 function carregarSom(nome, url) {
-    var request = new XMLHttpRequest();
-    request.open('GET', url, true);
-    request.responseType = 'arraybuffer';
-    request.onload = function () {
-        audioContext.decodeAudioData(request.response, function (buffer) {
-            audioBuffers[nome] = buffer;
-        }, function (error) {
-            console.error('Erro ao decodificar áudio: ' + nome, error);
+    const requisicao = new XMLHttpRequest();
+    requisicao.open('GET', url, true);
+    requisicao.responseType = 'arraybuffer';
+    requisicao.onload = function () {
+        contextoAudio.decodeAudioData(requisicao.response, function (buffer) {
+            buffersAudio[nome] = buffer;
+        }, function (erro) {
+            console.error('Erro ao decodificar áudio: ' + nome, erro);
         });
     };
-    request.send();
+    requisicao.send();
 }
 
 function tocarSom(nome) {
-    if (!audioBuffers[nome]) {
+    if (!buffersAudio[nome]) {
         return;
     }
-    var source = audioContext.createBufferSource();
-    source.buffer = audioBuffers[nome];
-    source.connect(audioContext.destination);
-    source.start(0);
+    const fonteAudio = contextoAudio.createBufferSource();
+    fonteAudio.buffer = buffersAudio[nome];
+    fonteAudio.connect(contextoAudio.destination);
+    fonteAudio.start(0);
 }
 
 // Carregar os sons (confirme que os arquivos estão na pasta "recursos" e com os nomes corretos)
@@ -103,56 +81,56 @@ carregarSom("gameOver", "./recursos/somGameOver.mp3");
 /********************
  * VARIÁVEIS DO JOGO *
  ********************/
-var tabuleiro = document.getElementById('tabuleiro');
-var raquete = document.getElementById('raquete');
-var bola = document.getElementById('bola');
-var botao = document.getElementById('botao');
+const tabuleiro = document.getElementById('tabuleiro');
+const raquete = document.getElementById('raquete');
+const bola = document.getElementById('bola');
+const botao = document.getElementById('botao');
 
-var contadorPontos = document.getElementById('contadorPontos');
-var contadorRecorde = document.getElementById('contadorRecorde');
-var vidasEl = document.getElementById('vidas');
-var temporizadorEl = document.getElementById('temporizador');
-var nivelEl = document.getElementById('nomeNivel');
+const contadorPontos = document.getElementById('contadorPontos');
+const contadorRecorde = document.getElementById('contadorRecorde');
+const vidasEl = document.getElementById('vidas');
+const temporizadorEl = document.getElementById('temporizador');
+const nivelEl = document.getElementById('nomeNivel');
 
-var boardWidth = tabuleiro.offsetWidth;
-var boardHeight = tabuleiro.offsetHeight;
-var paddleWidth = raquete.offsetWidth;
-var paddleHeight = raquete.offsetHeight;
-var paddleX;
+let larguraTabuleiro = tabuleiro.offsetWidth;
+let alturaTabuleiro = tabuleiro.offsetHeight;
+const larguraRaquete = raquete.offsetWidth;
+const alturaRaquete = raquete.offsetHeight;
+let posicaoRaqueteX;
 
-var ballSize = bola.offsetWidth;
-var ballX, ballY;
-var ballSpeedX, ballSpeedY;
+const tamanhoBola = bola.offsetWidth;
+let posicaoBolaX, posicaoBolaY;
+let velocidadeBolaX, velocidadeBolaY;
 
-var animationFrameId;
-var gameRunning = false;
+let idFrameAnimacao;
+let jogoEmExecucao = false;
 
-var score = 0;
-var highScore = 0;
-var lives = 5;
-var level = 1;
+let pontuacao = 0;
+let pontuacaoRecorde = 0;
+let vidas = 5;
+let nivel = 1;
 
-var lastSpeedIncreaseScore = 0;
-var lastLifeIncreaseScore = 0;
+let ultimoPontoAumentoVelocidade = 0;
+let ultimoPontoAumentoVida = 0;
 
-var countdownActive = false;
+let contadorRegressivoAtivo = false;
 
 /************************************
  * FUNÇÕES DA INTERFACE DO JOGO     *
  ************************************/
-function updateScoreDisplay() {
-    contadorPontos.textContent = score.toString().padStart(6, '0');
+function atualizarExibicaoPontuacao() {
+    contadorPontos.textContent = pontuacao.toString().padStart(6, '0');
 }
 
-function updateRecordDisplay() {
-    contadorRecorde.textContent = highScore.toString().padStart(6, '0');
+function atualizarExibicaoRecorde() {
+    contadorRecorde.textContent = pontuacaoRecorde.toString().padStart(6, '0');
 }
 
-function updateLivesDisplay() {
-    var vidasSpans = vidasEl.querySelectorAll('span');
-    var i;
+function atualizarExibicaoVidas() {
+    const vidasSpans = vidasEl.querySelectorAll('span');
+    let i;
     for (i = 0; i < vidasSpans.length; i++) {
-        if (i < lives) {
+        if (i < vidas) {
             vidasSpans[i].classList.remove('vidaPerdida');
         } else {
             vidasSpans[i].classList.add('vidaPerdida');
@@ -160,8 +138,8 @@ function updateLivesDisplay() {
     }
 }
 
-function updateLevelDisplay() {
-    var nivelTexto = 'nivel-' + (level < 10 ? '0' + level : level);
+function atualizarExibicaoNivel() {
+    const nivelTexto = 'nivel-' + (nivel < 10 ? '0' + nivel : nivel);
     nivelEl.textContent = nivelTexto;
 }
 
@@ -169,201 +147,201 @@ function updateLevelDisplay() {
  * CONTROLE DO JOGO                 *
  ************************************/
 function iniciar_jogo() {
-    score = 0;
-    lives = 5;
-    level = 1;
-    updateScoreDisplay();
-    updateLivesDisplay();
-    updateLevelDisplay();
+    pontuacao = 0;
+    vidas = 5;
+    nivel = 1;
+    atualizarExibicaoPontuacao();
+    atualizarExibicaoVidas();
+    atualizarExibicaoNivel();
 
-    highScore = parseInt(localStorage.getItem('pongHighScore')) || 0;
-    updateRecordDisplay();
+    pontuacaoRecorde = parseInt(localStorage.getItem('pongHighScore')) || 0;
+    atualizarExibicaoRecorde();
 
-    lastSpeedIncreaseScore = 0;
-    lastLifeIncreaseScore = 0;
+    ultimoPontoAumentoVelocidade = 0;
+    ultimoPontoAumentoVida = 0;
 
-    boardWidth = tabuleiro.offsetWidth;
-    boardHeight = tabuleiro.offsetHeight;
+    larguraTabuleiro = tabuleiro.offsetWidth;
+    alturaTabuleiro = tabuleiro.offsetHeight;
 
-    paddleX = (boardWidth - paddleWidth) / 2;
-    raquete.style.left = paddleX + 'px';
+    posicaoRaqueteX = (larguraTabuleiro - larguraRaquete) / 2;
+    raquete.style.left = posicaoRaqueteX + 'px';
 
-    ballX = paddleX + (paddleWidth - ballSize) / 2;
-    ballY = paddleHeight + 10;
+    posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
+    posicaoBolaY = alturaRaquete + 10;
 
-    ballSpeedX = 3;
-    ballSpeedY = 3;
+    velocidadeBolaX = 3;
+    velocidadeBolaY = 3;
 
     atualizarPosicoes();
 
     botao.style.display = 'none';
-    gameRunning = true;
-    animationFrameId = requestAnimationFrame(loopDoJogo);
+    jogoEmExecucao = true;
+    idFrameAnimacao = requestAnimationFrame(loopDoJogo);
 }
 
 function atualizarPosicoes() {
-    bola.style.left = ballX + 'px';
-    bola.style.bottom = ballY + 'px';
+    bola.style.left = posicaoBolaX + 'px';
+    bola.style.bottom = posicaoBolaY + 'px';
 }
 
 function loopDoJogo() {
-    if (!gameRunning) {
+    if (!jogoEmExecucao) {
         return;
     }
 
-    ballX += ballSpeedX;
-    ballY += ballSpeedY;
+    posicaoBolaX += velocidadeBolaX;
+    posicaoBolaY += velocidadeBolaY;
 
-    if (ballX <= 0) {
-        ballX = 0;
-        ballSpeedX = -ballSpeedX;
+    if (posicaoBolaX <= 0) {
+        posicaoBolaX = 0;
+        velocidadeBolaX = -velocidadeBolaX;
         tocarSom("parede");
-    } else if (ballX + ballSize >= boardWidth) {
-        ballX = boardWidth - ballSize;
-        ballSpeedX = -ballSpeedX;
+    } else if (posicaoBolaX + tamanhoBola >= larguraTabuleiro) {
+        posicaoBolaX = larguraTabuleiro - tamanhoBola;
+        velocidadeBolaX = -velocidadeBolaX;
         tocarSom("parede");
     }
 
-    if (ballY + ballSize >= boardHeight) {
-        ballY = boardHeight - ballSize;
-        ballSpeedY = -ballSpeedY;
+    if (posicaoBolaY + tamanhoBola >= alturaTabuleiro) {
+        posicaoBolaY = alturaTabuleiro - tamanhoBola;
+        velocidadeBolaY = -velocidadeBolaY;
         tocarSom("parede");
     }
 
     // Verifica colisão com a raquete
-    if (ballY <= paddleHeight) {
-        if (ballX + ballSize >= paddleX && ballX <= paddleX + paddleWidth) {
-            ballY = paddleHeight;
-            var hitPoint = (ballX + ballSize / 2) - (paddleX + paddleWidth / 2);
-            var normalizedHit = hitPoint / (paddleWidth / 2);
-            var bounceAngle = normalizedHit * (Math.PI / 4);
-            var currentSpeed = Math.sqrt(ballSpeedX * ballSpeedX + ballSpeedY * ballSpeedY);
-            ballSpeedX = currentSpeed * Math.sin(bounceAngle);
-            ballSpeedY = currentSpeed * Math.cos(bounceAngle);
-            if (ballSpeedY < 0) {
-                ballSpeedY = -ballSpeedY;
+    if (posicaoBolaY <= alturaRaquete) {
+        if (posicaoBolaX + tamanhoBola >= posicaoRaqueteX && posicaoBolaX <= posicaoRaqueteX + larguraRaquete) {
+            posicaoBolaY = alturaRaquete;
+            const pontoDeImpacto = (posicaoBolaX + tamanhoBola / 2) - (posicaoRaqueteX + larguraRaquete / 2);
+            const impactoNormalizado = pontoDeImpacto / (larguraRaquete / 2);
+            const anguloRebatida = impactoNormalizado * (Math.PI / 4);
+            const velocidadeAtual = Math.sqrt(velocidadeBolaX * velocidadeBolaX + velocidadeBolaY * velocidadeBolaY);
+            velocidadeBolaX = velocidadeAtual * Math.sin(anguloRebatida);
+            velocidadeBolaY = velocidadeAtual * Math.cos(anguloRebatida);
+            if (velocidadeBolaY < 0) {
+                velocidadeBolaY = -velocidadeBolaY;
             }
             tocarSom("raquete");
 
-            score += 10;
-            updateScoreDisplay();
+            pontuacao += 10;
+            atualizarExibicaoPontuacao();
 
-            if (score > highScore) {
-                highScore = score;
-                localStorage.setItem('pongHighScore', highScore);
-                updateRecordDisplay();
+            if (pontuacao > pontuacaoRecorde) {
+                pontuacaoRecorde = pontuacao;
+                localStorage.setItem('pongHighScore', pontuacaoRecorde);
+                atualizarExibicaoRecorde();
             }
 
             // Aumenta a velocidade e o nível a cada 100 pontos
-            while (score - lastSpeedIncreaseScore >= 100) {
-                increaseBallSpeed();
-                lastSpeedIncreaseScore += 100;
-                level++;
-                updateLevelDisplay();
+            while (pontuacao - ultimoPontoAumentoVelocidade >= 100) {
+                aumentarVelocidadeBola();
+                ultimoPontoAumentoVelocidade += 100;
+                nivel++;
+                atualizarExibicaoNivel();
                 tocarSom("levelUp");
             }
 
             // Ganha uma vida extra a cada 1000 pontos, se tiver menos de 5 vidas
-            while (score - lastLifeIncreaseScore >= 1000) {
-                if (lives < 5) {
-                    lives++;
-                    updateLivesDisplay();
+            while (pontuacao - ultimoPontoAumentoVida >= 1000) {
+                if (vidas < 5) {
+                    vidas++;
+                    atualizarExibicaoVidas();
                     tocarSom("extraVida");
                 } else {
                     break;
                 }
-                lastLifeIncreaseScore += 1000;
+                ultimoPontoAumentoVida += 1000;
             }
         }
     }
 
-    if (ballY < 0) {
-        gameRunning = false;
+    if (posicaoBolaY < 0) {
+        jogoEmExecucao = false;
         tocarSom("base");
-        ballX = paddleX + (paddleWidth - ballSize) / 2;
-        ballY = paddleHeight + 10;
+        posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
+        posicaoBolaY = alturaRaquete + 10;
         atualizarPosicoes();
-        lives--;
-        updateLivesDisplay();
-        if (lives <= 0) {
+        vidas--;
+        atualizarExibicaoVidas();
+        if (vidas <= 0) {
             fimDeJogo();
             return;
         }
-        iniciarCountdown();
+        iniciarContagemRegressiva();
         return;
     }
 
     atualizarPosicoes();
-    animationFrameId = requestAnimationFrame(loopDoJogo);
+    idFrameAnimacao = requestAnimationFrame(loopDoJogo);
 }
 
-function increaseBallSpeed() {
-    var signX = ballSpeedX >= 0 ? 1 : -1;
-    var signY = ballSpeedY >= 0 ? 1 : -1;
-    ballSpeedX = signX * (Math.abs(ballSpeedX) + 0.5);
-    ballSpeedY = signY * (Math.abs(ballSpeedY) + 0.5);
+function aumentarVelocidadeBola() {
+    const sinalX = velocidadeBolaX >= 0 ? 1 : -1;
+    const sinalY = velocidadeBolaY >= 0 ? 1 : -1;
+    velocidadeBolaX = sinalX * (Math.abs(velocidadeBolaX) + 0.5);
+    velocidadeBolaY = sinalY * (Math.abs(velocidadeBolaY) + 0.5);
 }
 
-function iniciarCountdown() {
-    countdownActive = true;
-    var countdown = 3;
+function iniciarContagemRegressiva() {
+    contadorRegressivoAtivo = true;
+    let contagem = 3;
     temporizadorEl.style.display = 'block';
-    temporizadorEl.textContent = countdown;
-    var intervalId = setInterval(function () {
-        countdown--;
-        if (countdown > 0) {
-            temporizadorEl.textContent = countdown;
+    temporizadorEl.textContent = contagem;
+    const intervaloId = setInterval(function () {
+        contagem--;
+        if (contagem > 0) {
+            temporizadorEl.textContent = contagem;
         } else {
-            clearInterval(intervalId);
+            clearInterval(intervaloId);
             temporizadorEl.style.display = 'none';
-            countdownActive = false;
+            contadorRegressivoAtivo = false;
             reiniciarRodada();
         }
     }, 1000);
 }
 
 function reiniciarRodada() {
-    paddleX = (boardWidth - paddleWidth) / 2;
-    raquete.style.left = paddleX + 'px';
-    ballX = paddleX + (paddleWidth - ballSize) / 2;
-    ballY = paddleHeight + 10;
+    posicaoRaqueteX = (larguraTabuleiro - larguraRaquete) / 2;
+    raquete.style.left = posicaoRaqueteX + 'px';
+    posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
+    posicaoBolaY = alturaRaquete + 10;
     atualizarPosicoes();
-    gameRunning = true;
-    animationFrameId = requestAnimationFrame(loopDoJogo);
+    jogoEmExecucao = true;
+    idFrameAnimacao = requestAnimationFrame(loopDoJogo);
 }
 
 function fimDeJogo() {
-    gameRunning = false;
-    cancelAnimationFrame(animationFrameId);
+    jogoEmExecucao = false;
+    cancelAnimationFrame(idFrameAnimacao);
     botao.style.display = 'block';
     tocarSom("gameOver");
-    alert('Fim de jogo! Sua pontuação: ' + score);
+    alert('Fim de jogo! Sua pontuação: ' + pontuacao);
 }
 
 /************************************
  * CONTROLE DA RAQUETE VIA TOQUE    *
  ************************************/
-tabuleiro.addEventListener('touchmove', function (e) {
-    e.preventDefault();
-    var touch = e.touches[0];
-    var rect = tabuleiro.getBoundingClientRect();
-    var touchX = touch.clientX - rect.left;
-    paddleX = touchX - paddleWidth / 2;
-    if (paddleX < 0) {
-        paddleX = 0;
+tabuleiro.addEventListener('touchmove', function (evento) {
+    evento.preventDefault();
+    const toque = evento.touches[0];
+    const retangulo = tabuleiro.getBoundingClientRect();
+    const posicaoToqueX = toque.clientX - retangulo.left;
+    posicaoRaqueteX = posicaoToqueX - larguraRaquete / 2;
+    if (posicaoRaqueteX < 0) {
+        posicaoRaqueteX = 0;
     }
-    if (paddleX > boardWidth - paddleWidth) {
-        paddleX = boardWidth - paddleWidth;
+    if (posicaoRaqueteX > larguraTabuleiro - larguraRaquete) {
+        posicaoRaqueteX = larguraTabuleiro - larguraRaquete;
     }
-    raquete.style.left = paddleX + 'px';
-    if (countdownActive) {
-        ballX = paddleX + (paddleWidth - ballSize) / 2;
-        ballY = paddleHeight + 10;
+    raquete.style.left = posicaoRaqueteX + 'px';
+    if (contadorRegressivoAtivo) {
+        posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
+        posicaoBolaY = alturaRaquete + 10;
         atualizarPosicoes();
     }
 });
 
 window.addEventListener('resize', function () {
-    boardWidth = tabuleiro.offsetWidth;
-    boardHeight = tabuleiro.offsetHeight;
+    larguraTabuleiro = tabuleiro.offsetWidth;
+    alturaTabuleiro = tabuleiro.offsetHeight;
 });
