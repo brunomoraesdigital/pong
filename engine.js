@@ -41,44 +41,6 @@ window.addEventListener('resize', debounce(aoRedimensionar, 100));
 })();
 
 /********************
- * GERENCIADOR DE SOM *
- ********************/
-const contextoAudio = new (window.AudioContext || window.webkitAudioContext)();
-const buffersAudio = {};
-
-function carregarSom(nome, url) {
-    const requisicao = new XMLHttpRequest();
-    requisicao.open('GET', url, true);
-    requisicao.responseType = 'arraybuffer';
-    requisicao.onload = function () {
-        contextoAudio.decodeAudioData(requisicao.response, function (buffer) {
-            buffersAudio[nome] = buffer;
-        }, function (erro) {
-            console.error('Erro ao decodificar áudio: ' + nome, erro);
-        });
-    };
-    requisicao.send();
-}
-
-function tocarSom(nome) {
-    if (!buffersAudio[nome]) {
-        return;
-    }
-    const fonteAudio = contextoAudio.createBufferSource();
-    fonteAudio.buffer = buffersAudio[nome];
-    fonteAudio.connect(contextoAudio.destination);
-    fonteAudio.start(0);
-}
-
-// Carregar os sons (confirme que os arquivos estão na pasta "recursos" e com os nomes corretos)
-carregarSom("raquete", "./recursos/somRaquete.mp3");
-carregarSom("parede", "./recursos/somParede.mp3");
-carregarSom("base", "./recursos/somBase.mp3");
-carregarSom("extraVida", "./recursos/somExtraVida.mp3");
-carregarSom("levelUp", "./recursos/somLevelUp.mp3");
-carregarSom("gameOver", "./recursos/somGameOver.mp3");
-
-/********************
  * VARIÁVEIS DO JOGO *
  ********************/
 const tabuleiro = document.getElementById('tabuleiro');
@@ -114,34 +76,6 @@ let ultimoPontoAumentoVelocidade = 0;
 let ultimoPontoAumentoVida = 0;
 
 let contadorRegressivoAtivo = false;
-
-/************************************
- * FUNÇÕES DA INTERFACE DO JOGO     *
- ************************************/
-function atualizarExibicaoPontuacao() {
-    contadorPontos.textContent = pontuacao.toString().padStart(6, '0');
-}
-
-function atualizarExibicaoRecorde() {
-    contadorRecorde.textContent = pontuacaoRecorde.toString().padStart(6, '0');
-}
-
-function atualizarExibicaoVidas() {
-    const vidasSpans = vidasEl.querySelectorAll('span');
-    let i;
-    for (i = 0; i < vidasSpans.length; i++) {
-        if (i < vidas) {
-            vidasSpans[i].classList.remove('vidaPerdida');
-        } else {
-            vidasSpans[i].classList.add('vidaPerdida');
-        }
-    }
-}
-
-function atualizarExibicaoNivel() {
-    const nivelTexto = 'nivel-' + (nivel < 10 ? '0' + nivel : nivel);
-    nivelEl.textContent = nivelTexto;
-}
 
 /************************************
  * CONTROLE DO JOGO                 *
@@ -282,6 +216,62 @@ function aumentarVelocidadeBola() {
     velocidadeBolaY = sinalY * (Math.abs(velocidadeBolaY) + 0.5);
 }
 
+/************************************
+ * CONTROLE DA RAQUETE VIA TOQUE    *
+ ************************************/
+tabuleiro.addEventListener('touchmove', function (evento) {
+    evento.preventDefault();
+    const toque = evento.touches[0];
+    const retangulo = tabuleiro.getBoundingClientRect();
+    const posicaoToqueX = toque.clientX - retangulo.left;
+    posicaoRaqueteX = posicaoToqueX - larguraRaquete / 2;
+    if (posicaoRaqueteX < 0) {
+        posicaoRaqueteX = 0;
+    }
+    if (posicaoRaqueteX > larguraTabuleiro - larguraRaquete) {
+        posicaoRaqueteX = larguraTabuleiro - larguraRaquete;
+    }
+    raquete.style.left = posicaoRaqueteX + 'px';
+    if (contadorRegressivoAtivo) {
+        posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
+        posicaoBolaY = alturaRaquete + 10;
+        atualizarPosicoes();
+    }
+});
+
+window.addEventListener('resize', function () {
+    larguraTabuleiro = tabuleiro.offsetWidth;
+    alturaTabuleiro = tabuleiro.offsetHeight;
+});
+
+/************************************ 
+ * FUNÇÕES DA INTERFACE DO JOGO     *
+ ************************************/
+function atualizarExibicaoPontuacao() {
+    contadorPontos.textContent = pontuacao.toString().padStart(6, '0');
+}
+
+function atualizarExibicaoRecorde() {
+    contadorRecorde.textContent = pontuacaoRecorde.toString().padStart(6, '0');
+}
+
+function atualizarExibicaoVidas() {
+    const vidasSpans = vidasEl.querySelectorAll('span');
+    let i;
+    for (i = 0; i < vidasSpans.length; i++) {
+        if (i < vidas) {
+            vidasSpans[i].classList.remove('vidaPerdida');
+        } else {
+            vidasSpans[i].classList.add('vidaPerdida');
+        }
+    }
+}
+
+function atualizarExibicaoNivel() {
+    const nivelTexto = 'nivel-' + (nivel < 10 ? '0' + nivel : nivel);
+    nivelEl.textContent = nivelTexto;
+}
+
 function iniciarContagemRegressiva() {
     contadorRegressivoAtivo = true;
     let contagem = 3;
@@ -318,30 +308,40 @@ function fimDeJogo() {
     alert('Fim de jogo! Sua pontuação: ' + pontuacao);
 }
 
-/************************************
- * CONTROLE DA RAQUETE VIA TOQUE    *
- ************************************/
-tabuleiro.addEventListener('touchmove', function (evento) {
-    evento.preventDefault();
-    const toque = evento.touches[0];
-    const retangulo = tabuleiro.getBoundingClientRect();
-    const posicaoToqueX = toque.clientX - retangulo.left;
-    posicaoRaqueteX = posicaoToqueX - larguraRaquete / 2;
-    if (posicaoRaqueteX < 0) {
-        posicaoRaqueteX = 0;
-    }
-    if (posicaoRaqueteX > larguraTabuleiro - larguraRaquete) {
-        posicaoRaqueteX = larguraTabuleiro - larguraRaquete;
-    }
-    raquete.style.left = posicaoRaqueteX + 'px';
-    if (contadorRegressivoAtivo) {
-        posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
-        posicaoBolaY = alturaRaquete + 10;
-        atualizarPosicoes();
-    }
-});
+/******************** 
+ * GERENCIADOR DE SOM *
+ ********************/
+const contextoAudio = new (window.AudioContext || window.webkitAudioContext)();
+const buffersAudio = {};
 
-window.addEventListener('resize', function () {
-    larguraTabuleiro = tabuleiro.offsetWidth;
-    alturaTabuleiro = tabuleiro.offsetHeight;
-});
+function carregarSom(nome, url) {
+    const requisicao = new XMLHttpRequest();
+    requisicao.open('GET', url, true);
+    requisicao.responseType = 'arraybuffer';
+    requisicao.onload = function () {
+        contextoAudio.decodeAudioData(requisicao.response, function (buffer) {
+            buffersAudio[nome] = buffer;
+        }, function (erro) {
+            console.error('Erro ao decodificar áudio: ' + nome, erro);
+        });
+    };
+    requisicao.send();
+}
+
+function tocarSom(nome) {
+    if (!buffersAudio[nome]) {
+        return;
+    }
+    const fonteAudio = contextoAudio.createBufferSource();
+    fonteAudio.buffer = buffersAudio[nome];
+    fonteAudio.connect(contextoAudio.destination);
+    fonteAudio.start(0);
+}
+
+// Carregar os sons (confirme que os arquivos estão na pasta "recursos" e com os nomes corretos)
+carregarSom("raquete", "./recursos/somRaquete.mp3");
+carregarSom("parede", "./recursos/somParede.mp3");
+carregarSom("base", "./recursos/somBase.mp3");
+carregarSom("extraVida", "./recursos/somExtraVida.mp3");
+carregarSom("levelUp", "./recursos/somLevelUp.mp3");
+carregarSom("gameOver", "./recursos/somGameOver.mp3");
