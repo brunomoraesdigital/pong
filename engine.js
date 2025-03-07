@@ -1,11 +1,12 @@
-/*******************************
+/* ******************************
  * AJUSTE DINÂMICO DE FONTES  *
- *******************************/
+ ****************************** */
+
 function obterDimensoesDaTela() {
     return {
         largura: window.innerWidth,
         altura: window.innerHeight
-    };
+    }
 }
 
 const ALTURA_REFERENCIA = 914;
@@ -14,16 +15,11 @@ const FONTE_REFERENCIA = 16;
 function atualizarTamanhoDaFonte(alturaTela) {
     let tamanhoDaFonte = Math.floor((FONTE_REFERENCIA * alturaTela) / ALTURA_REFERENCIA);
     document.documentElement.style.setProperty('--tamanho-da-fonte', tamanhoDaFonte + 'px');
-    return tamanhoDaFonte;
 }
 
 function aoRedimensionar() {
     let dimensoes = obterDimensoesDaTela();
-    let tamanhoFonte = atualizarTamanhoDaFonte(dimensoes.altura);
-    
-    if (false) {
-      atualizarDebug(dimensoes, tamanhoFonte);
-    } 
+    atualizarTamanhoDaFonte(dimensoes.altura);
 }
 
 function debounce(funcao, tempo) {
@@ -40,9 +36,10 @@ window.addEventListener('resize', debounce(aoRedimensionar, 100));
     aoRedimensionar();
 })();
 
-/********************
- * VARIÁVEIS DO JOGO *
- ********************/
+/*************************************
+ * Selecionar Elementos da Interface *
+ *************************************/
+
 const tabuleiro = document.getElementById('tabuleiro');
 const raquete = document.getElementById('raquete');
 const bola = document.getElementById('bola');
@@ -54,6 +51,10 @@ const vidasEl = document.getElementById('vidas');
 const temporizadorEl = document.getElementById('temporizador');
 const nivelEl = document.getElementById('nomeNivel');
 
+/****************************************
+ * Definir Variáveis de Layout e Estado *
+ ****************************************/
+
 let larguraTabuleiro = tabuleiro.offsetWidth;
 let alturaTabuleiro = tabuleiro.offsetHeight;
 const larguraRaquete = raquete.offsetWidth;
@@ -64,13 +65,13 @@ const tamanhoBola = bola.offsetWidth;
 let posicaoBolaX, posicaoBolaY;
 let velocidadeBolaX, velocidadeBolaY;
 
-let idFrameAnimacao;
-let jogoEmExecucao = false;
-
 let pontuacao = 0;
 let pontuacaoRecorde = 0;
 let vidas = 5;
 let nivel = 1;
+
+let idFrameAnimacao;
+let jogoEmExecucao = false;
 
 let ultimoPontoAumentoVelocidade = 0;
 let ultimoPontoAumentoVida = 0;
@@ -80,48 +81,39 @@ let contadorRegressivoAtivo = false;
 /************************************
  * CONTROLE DO JOGO                 *
  ************************************/
+
 function iniciar_jogo() {
-    pontuacao = 0;
-    vidas = 5;
-    nivel = 1;
-    atualizarExibicaoPontuacao();
-    atualizarExibicaoVidas();
-    atualizarExibicaoNivel();
-
-    pontuacaoRecorde = parseInt(localStorage.getItem('pongHighScore')) || 0;
-    atualizarExibicaoRecorde();
-
-    ultimoPontoAumentoVelocidade = 0;
-    ultimoPontoAumentoVida = 0;
 
     larguraTabuleiro = tabuleiro.offsetWidth;
     alturaTabuleiro = tabuleiro.offsetHeight;
 
-    posicaoRaqueteX = (larguraTabuleiro - larguraRaquete) / 2;
-    raquete.style.left = posicaoRaqueteX + 'px';
-
-    posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
-    posicaoBolaY = alturaRaquete + 10;
-
     velocidadeBolaX = 3;
     velocidadeBolaY = 3;
 
+    pontuacao = 0;
+
+    pontuacaoRecorde = parseInt(localStorage.getItem('pongHighScore')) || 0;
+
+    vidas = 5;
+
+    ultimoPontoAumentoVida = 0;
+
+    nivel = 1;
+
+    ultimoPontoAumentoVelocidade = 0;
+
+    definirPosicoes();
     atualizarPosicoes();
+    atualizarExibicaoPontuacao();
+    atualizarExibicaoRecorde();
+    atualizarExibicaoVidas();
+    atualizarExibicaoNivel();
 
     botao.style.display = 'none';
     jogoEmExecucao = true;
     idFrameAnimacao = requestAnimationFrame(loopDoJogo);
 }
-
-function atualizarPosicoes() {
-    bola.style.left = posicaoBolaX + 'px';
-    bola.style.bottom = posicaoBolaY + 'px';
-}
-
 function loopDoJogo() {
-    if (!jogoEmExecucao) {
-        return;
-    }
 
     posicaoBolaX += velocidadeBolaX;
     posicaoBolaY += velocidadeBolaY;
@@ -130,24 +122,30 @@ function loopDoJogo() {
         posicaoBolaX = 0;
         velocidadeBolaX = -velocidadeBolaX;
         tocarSom("parede");
+        //colisão da bola na parede esquerda
     } else if (posicaoBolaX + tamanhoBola >= larguraTabuleiro) {
         posicaoBolaX = larguraTabuleiro - tamanhoBola;
         velocidadeBolaX = -velocidadeBolaX;
         tocarSom("parede");
+        //colisão da bola na parede direita
     }
 
     if (posicaoBolaY + tamanhoBola >= alturaTabuleiro) {
         posicaoBolaY = alturaTabuleiro - tamanhoBola;
         velocidadeBolaY = -velocidadeBolaY;
         tocarSom("parede");
+        //colisão da bola na parede do topo
     }
 
-    // Verifica colisão com a raquete
     if (posicaoBolaY <= alturaRaquete) {
-        if (posicaoBolaX + tamanhoBola >= posicaoRaqueteX && posicaoBolaX <= posicaoRaqueteX + larguraRaquete) {
-            posicaoBolaY = alturaRaquete;
+        if (
+            posicaoBolaX + tamanhoBola >= posicaoRaqueteX &&
+            posicaoBolaX <= posicaoRaqueteX + larguraRaquete
+        ) {
+
+            posicaoBolaY = alturaRaquete + 10;
             const pontoDeImpacto = (posicaoBolaX + tamanhoBola / 2) - (posicaoRaqueteX + larguraRaquete / 2);
-            const impactoNormalizado = pontoDeImpacto / (larguraRaquete / 2);
+            let impactoNormalizado = pontoDeImpacto / (larguraRaquete / 2);
             const anguloRebatida = impactoNormalizado * (Math.PI / 4);
             const velocidadeAtual = Math.sqrt(velocidadeBolaX * velocidadeBolaX + velocidadeBolaY * velocidadeBolaY);
             velocidadeBolaX = velocidadeAtual * Math.sin(anguloRebatida);
@@ -156,7 +154,7 @@ function loopDoJogo() {
                 velocidadeBolaY = -velocidadeBolaY;
             }
             tocarSom("raquete");
-
+            //colisão da bola na raquete
             pontuacao += 10;
             atualizarExibicaoPontuacao();
 
@@ -166,16 +164,6 @@ function loopDoJogo() {
                 atualizarExibicaoRecorde();
             }
 
-            // Aumenta a velocidade e o nível a cada 100 pontos
-            while (pontuacao - ultimoPontoAumentoVelocidade >= 100) {
-                aumentarVelocidadeBola();
-                ultimoPontoAumentoVelocidade += 100;
-                nivel++;
-                atualizarExibicaoNivel();
-                tocarSom("levelUp");
-            }
-
-            // Ganha uma vida extra a cada 1000 pontos, se tiver menos de 5 vidas
             while (pontuacao - ultimoPontoAumentoVida >= 1000) {
                 if (vidas < 5) {
                     vidas++;
@@ -186,6 +174,14 @@ function loopDoJogo() {
                 }
                 ultimoPontoAumentoVida += 1000;
             }
+            while (pontuacao - ultimoPontoAumentoVelocidade >= 100) {
+                aumentarVelocidadeBola();
+                ultimoPontoAumentoVelocidade += 100;
+                nivel++;
+                atualizarExibicaoNivel();
+                tocarSom("levelUp");
+            }
+
         }
     }
 
@@ -205,20 +201,17 @@ function loopDoJogo() {
         return;
     }
 
-    atualizarPosicoes();
-    idFrameAnimacao = requestAnimationFrame(loopDoJogo);
-}
 
-function aumentarVelocidadeBola() {
-    const sinalX = velocidadeBolaX >= 0 ? 1 : -1;
-    const sinalY = velocidadeBolaY >= 0 ? 1 : -1;
-    velocidadeBolaX = sinalX * (Math.abs(velocidadeBolaX) + 0.5);
-    velocidadeBolaY = sinalY * (Math.abs(velocidadeBolaY) + 0.5);
+    atualizarPosicoes();
+
+    idFrameAnimacao = requestAnimationFrame(loopDoJogo);
+
 }
 
 /************************************
- * CONTROLE DA RAQUETE VIA TOQUE    *
+ * MOVIMENTAÇÃO DA RAQUETE          *
  ************************************/
+
 tabuleiro.addEventListener('touchmove', function (evento) {
     evento.preventDefault();
     const toque = evento.touches[0];
@@ -238,23 +231,33 @@ tabuleiro.addEventListener('touchmove', function (evento) {
         atualizarPosicoes();
     }
 });
-
 window.addEventListener('resize', function () {
     larguraTabuleiro = tabuleiro.offsetWidth;
     alturaTabuleiro = tabuleiro.offsetHeight;
 });
 
-/************************************ 
- * FUNÇÕES DA INTERFACE DO JOGO     *
+/************************************
+ * ATUALIZAÇÃO DE EXIBIÇÃO          *
  ************************************/
+function definirPosicoes() {
+
+    posicaoRaqueteX = (larguraTabuleiro - larguraRaquete) / 2;
+
+    posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
+    posicaoBolaY = alturaRaquete + 10;
+}
+function atualizarPosicoes() {
+    raquete.style.left = posicaoRaqueteX + 'px';
+
+    bola.style.left = posicaoBolaX + 'px';
+    bola.style.bottom = posicaoBolaY + 'px';
+}
 function atualizarExibicaoPontuacao() {
     contadorPontos.textContent = pontuacao.toString().padStart(6, '0');
 }
-
 function atualizarExibicaoRecorde() {
     contadorRecorde.textContent = pontuacaoRecorde.toString().padStart(6, '0');
 }
-
 function atualizarExibicaoVidas() {
     const vidasSpans = vidasEl.querySelectorAll('span');
     let i;
@@ -266,12 +269,20 @@ function atualizarExibicaoVidas() {
         }
     }
 }
-
 function atualizarExibicaoNivel() {
     const nivelTexto = 'nivel-' + (nivel < 10 ? '0' + nivel : nivel);
     nivelEl.textContent = nivelTexto;
 }
 
+/************************************
+ * MELHORIAS E EVENTOS               *
+ ************************************/
+function aumentarVelocidadeBola() {
+    const sinalX = velocidadeBolaX >= 0 ? 1 : -1;
+    const sinalY = velocidadeBolaY >= 0 ? 1 : -1;
+    velocidadeBolaX = sinalX * (Math.abs(velocidadeBolaX) + 0.5);
+    velocidadeBolaY = sinalY * (Math.abs(velocidadeBolaY) + 0.5);
+}
 function iniciarContagemRegressiva() {
     contadorRegressivoAtivo = true;
     let contagem = 3;
@@ -289,17 +300,16 @@ function iniciarContagemRegressiva() {
         }
     }, 1000);
 }
-
 function reiniciarRodada() {
     posicaoRaqueteX = (larguraTabuleiro - larguraRaquete) / 2;
     raquete.style.left = posicaoRaqueteX + 'px';
     posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
     posicaoBolaY = alturaRaquete + 10;
+    velocidadeBolaY = -velocidadeBolaY;
     atualizarPosicoes();
     jogoEmExecucao = true;
     idFrameAnimacao = requestAnimationFrame(loopDoJogo);
 }
-
 function fimDeJogo() {
     jogoEmExecucao = false;
     cancelAnimationFrame(idFrameAnimacao);
@@ -308,9 +318,10 @@ function fimDeJogo() {
     alert('Fim de jogo! Sua pontuação: ' + pontuacao);
 }
 
-/******************** 
- * GERENCIADOR DE SOM *
- ********************/
+
+/************************************
+ * GERENCIAMENTO DE SONS            *
+ ************************************/
 const contextoAudio = new (window.AudioContext || window.webkitAudioContext)();
 const buffersAudio = {};
 
@@ -338,7 +349,6 @@ function tocarSom(nome) {
     fonteAudio.start(0);
 }
 
-// Carregar os sons (confirme que os arquivos estão na pasta "recursos" e com os nomes corretos)
 carregarSom("raquete", "./recursos/somRaquete.mp3");
 carregarSom("parede", "./recursos/somParede.mp3");
 carregarSom("base", "./recursos/somBase.mp3");
