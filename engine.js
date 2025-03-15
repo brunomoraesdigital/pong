@@ -51,30 +51,37 @@ const vidasEl = document.getElementById('vidas');
 const temporizadorEl = document.getElementById('temporizador');
 const nivelEl = document.getElementById('nomeNivel');
 
-/****************************************
- * Definir Variáveis de Layout e Estado *
- ****************************************/
+/**************************************************************
+ * Obter as dimensões dos elementos tabuleiro, raquete e bola *
+ **************************************************************/
 
 let larguraTabuleiro = tabuleiro.offsetWidth;
 let alturaTabuleiro = tabuleiro.offsetHeight;
+
 const larguraRaquete = raquete.offsetWidth;
 const alturaRaquete = raquete.offsetHeight;
-let posicaoRaqueteX;
 
 const tamanhoBola = bola.offsetWidth;
+
+
+/************************************
+ * Variáveis                        *
+ ************************************/
+let posicaoRaqueteX;
 let posicaoBolaX, posicaoBolaY;
 let velocidadeBolaX, velocidadeBolaY;
 
-let pontuacao = 0;
-let pontuacaoRecorde = 0;
-let vidas = 5;
-let nivel = 1;
-
-let idFrameAnimacao;
+let idFrameAnimacao
 let jogoEmExecucao = false;
 
-let ultimoPontoAumentoVelocidade = 0;
+let pontuacao = 0;
+let pontuacaoRecorde = 0;
+
+let vidas = 5;
 let ultimoPontoAumentoVida = 0;
+
+let nivel = 1;
+let ultimoPontoAumentoVelocidade = 0;
 
 let contadorRegressivoAtivo = false;
 
@@ -84,24 +91,24 @@ let contadorRegressivoAtivo = false;
 
 function iniciar_jogo() {
 
-    larguraTabuleiro = tabuleiro.offsetWidth;
-    alturaTabuleiro = tabuleiro.offsetHeight;
-
+    // variáveis
+    
     velocidadeBolaX = 3;
     velocidadeBolaY = 3;
 
     pontuacao = 0;
-
     pontuacaoRecorde = parseInt(localStorage.getItem('pongHighScore')) || 0;
 
     vidas = 5;
-
     ultimoPontoAumentoVida = 0;
 
     nivel = 1;
-
     ultimoPontoAumentoVelocidade = 0;
 
+    larguraTabuleiro = tabuleiro.offsetWidth;
+    alturaTabuleiro = tabuleiro.offsetHeight;
+
+    // funções
     definirPosicoes();
     atualizarPosicoes();
     atualizarExibicaoPontuacao();
@@ -109,31 +116,34 @@ function iniciar_jogo() {
     atualizarExibicaoVidas();
     atualizarExibicaoNivel();
 
+    // diversos
     botao.style.display = 'none';
     jogoEmExecucao = true;
+    // Iniciar o loop
     idFrameAnimacao = requestAnimationFrame(loopDoJogo);
 }
-function loopDoJogo() {
 
+
+function loopDoJogo() {
+    if (!jogoEmExecucao) {
+        return;
+    }
     posicaoBolaX += velocidadeBolaX;
     posicaoBolaY += velocidadeBolaY;
 
     if (posicaoBolaX <= 0) {
         posicaoBolaX = 0;
         velocidadeBolaX = -velocidadeBolaX;
-        tocarSom("parede");
         //colisão da bola na parede esquerda
     } else if (posicaoBolaX + tamanhoBola >= larguraTabuleiro) {
         posicaoBolaX = larguraTabuleiro - tamanhoBola;
         velocidadeBolaX = -velocidadeBolaX;
-        tocarSom("parede");
         //colisão da bola na parede direita
     }
 
     if (posicaoBolaY + tamanhoBola >= alturaTabuleiro) {
         posicaoBolaY = alturaTabuleiro - tamanhoBola;
         velocidadeBolaY = -velocidadeBolaY;
-        tocarSom("parede");
         //colisão da bola na parede do topo
     }
 
@@ -142,8 +152,6 @@ function loopDoJogo() {
             posicaoBolaX + tamanhoBola >= posicaoRaqueteX &&
             posicaoBolaX <= posicaoRaqueteX + larguraRaquete
         ) {
-
-            posicaoBolaY = alturaRaquete + 10;
             const pontoDeImpacto = (posicaoBolaX + tamanhoBola / 2) - (posicaoRaqueteX + larguraRaquete / 2);
             let impactoNormalizado = pontoDeImpacto / (larguraRaquete / 2);
             const anguloRebatida = impactoNormalizado * (Math.PI / 4);
@@ -153,8 +161,8 @@ function loopDoJogo() {
             if (velocidadeBolaY < 0) {
                 velocidadeBolaY = -velocidadeBolaY;
             }
-            tocarSom("raquete");
             //colisão da bola na raquete
+            
             pontuacao += 10;
             atualizarExibicaoPontuacao();
 
@@ -168,26 +176,26 @@ function loopDoJogo() {
                 if (vidas < 5) {
                     vidas++;
                     atualizarExibicaoVidas();
-                    tocarSom("extraVida");
                 } else {
                     break;
                 }
                 ultimoPontoAumentoVida += 1000;
             }
+
             while (pontuacao - ultimoPontoAumentoVelocidade >= 100) {
                 aumentarVelocidadeBola();
                 ultimoPontoAumentoVelocidade += 100;
                 nivel++;
                 atualizarExibicaoNivel();
-                tocarSom("levelUp");
             }
+
 
         }
     }
 
     if (posicaoBolaY < 0) {
         jogoEmExecucao = false;
-        tocarSom("base");
+        //colisão da bola na base
         posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
         posicaoBolaY = alturaRaquete + 10;
         atualizarPosicoes();
@@ -197,82 +205,95 @@ function loopDoJogo() {
             fimDeJogo();
             return;
         }
-        iniciarContagemRegressiva();
-        return;
+        iniciarContagemRegressiva()
+        return; //Interrompe a execução da função
     }
 
-
     atualizarPosicoes();
-
+    // Continua o loop
     idFrameAnimacao = requestAnimationFrame(loopDoJogo);
-
 }
+
+/************************************
+ *                *
+ ************************************/
+
+function definirPosicoes() {
+    posicaoRaqueteX = (larguraTabuleiro - larguraRaquete) / 2;
+    posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
+    posicaoBolaY = alturaRaquete + 10;
+}
+
 
 /************************************
  * MOVIMENTAÇÃO DA RAQUETE          *
  ************************************/
 
-tabuleiro.addEventListener('touchmove', function (evento) {
-    evento.preventDefault();
-    const toque = evento.touches[0];
-    const retangulo = tabuleiro.getBoundingClientRect();
-    const posicaoToqueX = toque.clientX - retangulo.left;
-    posicaoRaqueteX = posicaoToqueX - larguraRaquete / 2;
-    if (posicaoRaqueteX < 0) {
-        posicaoRaqueteX = 0;
+tabuleiro.addEventListener('touchmove',
+    function (evento) {
+        evento.preventDefault();
+        const toque = evento.touches[0];
+        const retangulo = tabuleiro.getBoundingClientRect();
+        const posicaoToqueX = toque.clientX - retangulo.left;
+        posicaoRaqueteX = posicaoToqueX - larguraRaquete / 2;
+        if (posicaoRaqueteX < 0) {
+            posicaoRaqueteX = 0;
+        }
+        if (posicaoRaqueteX > larguraTabuleiro - larguraRaquete) {
+            posicaoRaqueteX = larguraTabuleiro - larguraRaquete;
+        }
+        raquete.style.left = posicaoRaqueteX + 'px';
+        if (contadorRegressivoAtivo) {
+            posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
+            posicaoBolaY = alturaRaquete + 10;
+            atualizarPosicoes();
+        }    
     }
-    if (posicaoRaqueteX > larguraTabuleiro - larguraRaquete) {
-        posicaoRaqueteX = larguraTabuleiro - larguraRaquete;
-    }
-    raquete.style.left = posicaoRaqueteX + 'px';
-    if (contadorRegressivoAtivo) {
-        posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
-        posicaoBolaY = alturaRaquete + 10;
-        atualizarPosicoes();
-    }
-});
+)
+
 window.addEventListener('resize', function () {
     larguraTabuleiro = tabuleiro.offsetWidth;
     alturaTabuleiro = tabuleiro.offsetHeight;
 });
 
+
 /************************************
  * ATUALIZAÇÃO DE EXIBIÇÃO          *
  ************************************/
-function definirPosicoes() {
 
-    posicaoRaqueteX = (larguraTabuleiro - larguraRaquete) / 2;
-
-    posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
-    posicaoBolaY = alturaRaquete + 10;
-}
 function atualizarPosicoes() {
     raquete.style.left = posicaoRaqueteX + 'px';
-
     bola.style.left = posicaoBolaX + 'px';
     bola.style.bottom = posicaoBolaY + 'px';
 }
+
 function atualizarExibicaoPontuacao() {
     contadorPontos.textContent = pontuacao.toString().padStart(6, '0');
 }
+
 function atualizarExibicaoRecorde() {
     contadorRecorde.textContent = pontuacaoRecorde.toString().padStart(6, '0');
 }
+
 function atualizarExibicaoVidas() {
     const vidasSpans = vidasEl.querySelectorAll('span');
     let i;
     for (i = 0; i < vidasSpans.length; i++) {
         if (i < vidas) {
             vidasSpans[i].classList.remove('vidaPerdida');
+            console.log('Elemento ' + i + ' ativo:', vidasSpans[i]); // Debug: elemento ativo
         } else {
             vidasSpans[i].classList.add('vidaPerdida');
+            console.log('Elemento ' + i + ' perdido:', vidasSpans[i]); // Debug: elemento com vida perdida
         }
     }
 }
+
 function atualizarExibicaoNivel() {
     const nivelTexto = 'nivel-' + (nivel < 10 ? '0' + nivel : nivel);
     nivelEl.textContent = nivelTexto;
 }
+
 
 /************************************
  * MELHORIAS E EVENTOS               *
@@ -283,6 +304,18 @@ function aumentarVelocidadeBola() {
     velocidadeBolaX = sinalX * (Math.abs(velocidadeBolaX) + 0.5);
     velocidadeBolaY = sinalY * (Math.abs(velocidadeBolaY) + 0.5);
 }
+
+function reiniciarRodada() {
+    posicaoRaqueteX = (larguraTabuleiro - larguraRaquete) / 2;
+    raquete.style.left = posicaoRaqueteX + 'px';
+    posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
+    posicaoBolaY = alturaRaquete + 10;
+    velocidadeBolaY = -velocidadeBolaY;
+    atualizarPosicoes();
+    jogoEmExecucao = true;
+    idFrameAnimacao = requestAnimationFrame(loopDoJogo);
+}
+
 function iniciarContagemRegressiva() {
     contadorRegressivoAtivo = true;
     let contagem = 3;
@@ -300,21 +333,11 @@ function iniciarContagemRegressiva() {
         }
     }, 1000);
 }
-function reiniciarRodada() {
-    posicaoRaqueteX = (larguraTabuleiro - larguraRaquete) / 2;
-    raquete.style.left = posicaoRaqueteX + 'px';
-    posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
-    posicaoBolaY = alturaRaquete + 10;
-    velocidadeBolaY = -velocidadeBolaY;
-    atualizarPosicoes();
-    jogoEmExecucao = true;
-    idFrameAnimacao = requestAnimationFrame(loopDoJogo);
-}
+
 function fimDeJogo() {
     jogoEmExecucao = false;
     cancelAnimationFrame(idFrameAnimacao);
     botao.style.display = 'block';
-    tocarSom("gameOver");
     alert('Fim de jogo! Sua pontuação: ' + pontuacao);
 }
 
