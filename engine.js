@@ -134,16 +134,19 @@ function loopDoJogo() {
     if (posicaoBolaX <= 0) {
         posicaoBolaX = 0;
         velocidadeBolaX = -velocidadeBolaX;
+        tocarSom('parede');
         //colisão da bola na parede esquerda
     } else if (posicaoBolaX + tamanhoBola >= larguraTabuleiro) {
         posicaoBolaX = larguraTabuleiro - tamanhoBola;
         velocidadeBolaX = -velocidadeBolaX;
+        tocarSom('parede');
         //colisão da bola na parede direita
     }
 
     if (posicaoBolaY + tamanhoBola >= alturaTabuleiro) {
         posicaoBolaY = alturaTabuleiro - tamanhoBola;
         velocidadeBolaY = -velocidadeBolaY;
+        tocarSom('parede');
         //colisão da bola na parede do topo
     }
 
@@ -161,6 +164,7 @@ function loopDoJogo() {
             if (velocidadeBolaY < 0) {
                 velocidadeBolaY = -velocidadeBolaY;
             }
+            tocarSom('raquete');
             //colisão da bola na raquete
             
             pontuacao += 10;
@@ -176,6 +180,7 @@ function loopDoJogo() {
                 if (vidas < 5) {
                     vidas++;
                     atualizarExibicaoVidas();
+                    tocarSom('extraVida');
                 } else {
                     break;
                 }
@@ -187,6 +192,7 @@ function loopDoJogo() {
                 ultimoPontoAumentoVelocidade += 100;
                 nivel++;
                 atualizarExibicaoNivel();
+                tocarSom('levelUp');
             }
 
 
@@ -195,6 +201,7 @@ function loopDoJogo() {
 
     if (posicaoBolaY < 0) {
         jogoEmExecucao = false;
+        tocarSom('base');
         //colisão da bola na base
         posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
         posicaoBolaY = alturaRaquete + 10;
@@ -281,10 +288,8 @@ function atualizarExibicaoVidas() {
     for (i = 0; i < vidasSpans.length; i++) {
         if (i < vidas) {
             vidasSpans[i].classList.remove('vidaPerdida');
-            console.log('Elemento ' + i + ' ativo:', vidasSpans[i]); // Debug: elemento ativo
         } else {
             vidasSpans[i].classList.add('vidaPerdida');
-            console.log('Elemento ' + i + ' perdido:', vidasSpans[i]); // Debug: elemento com vida perdida
         }
     }
 }
@@ -338,6 +343,7 @@ function fimDeJogo() {
     jogoEmExecucao = false;
     cancelAnimationFrame(idFrameAnimacao);
     botao.style.display = 'block';
+    tocarSom('gameOver');
     alert('Fim de jogo! Sua pontuação: ' + pontuacao);
 }
 
