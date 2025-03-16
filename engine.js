@@ -92,6 +92,7 @@ const vidasEl = document.getElementById('vidas');
 const nivelEl = document.getElementById('nomeNivel');
 const temporizadorEl = document.getElementById('temporizador');
 const mensagemFimDoJogoEl = document.getElementById('mensagemFimDoJogo');
+const dicaEl = document.getElementById('dica');
 
 /**************************************************************
  * Obter as dimensões dos elementos tabuleiro, raquete e bola *
@@ -164,6 +165,7 @@ function iniciar_jogo() {
     atualizarExibicaoNivel();
 
     // diversos
+    dicaEl.style.display = 'none';
     botao.style.display = 'none';
     jogoEmExecucao = true;
     // Iniciar o loop
@@ -175,6 +177,7 @@ function loopDoJogo() {
     if (!jogoEmExecucao) {
         return;
     }
+    atualizarRaquete();
     posicaoBolaX += velocidadeBolaX;
     posicaoBolaY += velocidadeBolaY;
 
@@ -279,9 +282,9 @@ function definirPosicoes() {
 }
 
 
-/************************************
- * MOVIMENTAÇÃO DA RAQUETE com o dedo     *
- ************************************/
+/**************************************
+ * MOVIMENTAÇÃO DA RAQUETE COM O DEDO *
+ **************************************/
 
 tabuleiro.addEventListener('touchmove',
     function (evento) {
@@ -302,16 +305,17 @@ tabuleiro.addEventListener('touchmove',
     }
 )
 
-/************************************
- * MOVIMENTAÇÃO DA RAQUETE com o mouse      *
- ************************************/
+/***************************************
+ * MOVIMENTAÇÃO DA RAQUETE COM O MOUSE * xxxxxxxxxxxxxxx xxxxxxxxxxx
+ ***************************************/
 
-tabuleiro.addEventListener('mousemove', 
+window.addEventListener('mousemove', 
     function (evento) {
         evento.preventDefault();
-        const retangulo = tabuleiro.getBoundingClientRect();
-        const posicaoX = evento.clientX - retangulo.left;
-        posicaoRaqueteX = posicaoX - larguraRaquete / 2;
+        if (!jogoEmExecucao) return;
+        const retangulo/*rect*/ = tabuleiro.getBoundingClientRect();
+        const posicaoX/*mouseX*/ = evento.clientX - retangulo.left;
+        posicaoRaqueteX = posicaoX - (larguraRaquete / 2);
 
         if (jogoEmExecucao) {
             if (posicaoRaqueteX < 0) {
@@ -324,6 +328,38 @@ tabuleiro.addEventListener('mousemove',
         }
 });
 
+/***************************************
+ * MOVIMENTAÇÃO DA RAQUETE COM TECLADO *
+ ***************************************/
+const teclas = {
+    ArrowLeft: false,
+    ArrowRight: false
+};
+
+window.addEventListener('keydown', (evento) => {
+    if (['ArrowLeft', 'ArrowRight'].includes(evento.key)) {
+        evento.preventDefault();
+        teclas[evento.key] = true;
+    }
+});
+
+window.addEventListener('keyup', (evento) => {
+    if (['ArrowLeft', 'ArrowRight'].includes(evento.key)) {
+        evento.preventDefault();
+        teclas[evento.key] = false;
+    }
+});
+
+function atualizarRaquete() {
+    const velocidade = 7; // Aumente este valor para mais velocidade
+    if (teclas.ArrowLeft) {
+        posicaoRaqueteX = Math.max(0, posicaoRaqueteX - velocidade);
+    }
+    if (teclas.ArrowRight) {
+        posicaoRaqueteX = Math.min(larguraTabuleiro - larguraRaquete, posicaoRaqueteX + velocidade);
+    }
+    raquete.style.left = posicaoRaqueteX + 'px';
+}
 
 
 window.addEventListener('resize', function () {
@@ -429,6 +465,7 @@ function fimDeJogo() {
             botao.style.display = 'block';
             clearInterval(intervaloFimDoJogo);
             mensagemFimDoJogoEl.style.display = 'none';
+            dicaEl.style.display = 'block';
         }
     }, 1000);
 

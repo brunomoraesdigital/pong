@@ -61,10 +61,13 @@ h2 {
 .rodape {
   background-color: #222222;
   width: 100%;
-  padding: 1rem 0;
+  /*padding: 1rem 0;*/
+  height: 3rem;
   flex: 0 0 auto;
   overflow: hidden;
-
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 p {
@@ -303,5 +306,14 @@ p {
   75% {
     content: "...";
   }
+}
+
+#tabuleiro.mouse-oculto {
+  cursor: none;
+}
+
+.dica {
+  position: absolute;
+  bottom: 3.5rem;
 }
 
