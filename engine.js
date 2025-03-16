@@ -18,7 +18,7 @@
   
     // Registra o tempo de início
     var startTime = new Date().getTime();
-    var minDuration = 3000; // 3 segundos
+    var minDuration = 2000; // 3 segundos
   
     window.addEventListener("load", function() {
       var elapsed = new Date().getTime() - startTime;
@@ -280,7 +280,7 @@ function definirPosicoes() {
 
 
 /************************************
- * MOVIMENTAÇÃO DA RAQUETE          *
+ * MOVIMENTAÇÃO DA RAQUETE com o dedo     *
  ************************************/
 
 tabuleiro.addEventListener('touchmove',
@@ -301,6 +301,30 @@ tabuleiro.addEventListener('touchmove',
         }
     }
 )
+
+/************************************
+ * MOVIMENTAÇÃO DA RAQUETE com o mouse      *
+ ************************************/
+
+tabuleiro.addEventListener('mousemove', 
+    function (evento) {
+        evento.preventDefault();
+        const retangulo = tabuleiro.getBoundingClientRect();
+        const posicaoX = evento.clientX - retangulo.left;
+        posicaoRaqueteX = posicaoX - larguraRaquete / 2;
+
+        if (jogoEmExecucao) {
+            if (posicaoRaqueteX < 0) {
+                posicaoRaqueteX = 0;
+            }
+            if (posicaoRaqueteX > larguraTabuleiro - larguraRaquete) {
+                posicaoRaqueteX = larguraTabuleiro - larguraRaquete;
+            }
+            raquete.style.left = posicaoRaqueteX + 'px';
+        }
+});
+
+
 
 window.addEventListener('resize', function () {
     larguraTabuleiro = tabuleiro.offsetWidth;
