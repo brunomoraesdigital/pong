@@ -1,3 +1,43 @@
+(function() {
+    var loader = document.getElementById("loader");
+    if (loader) {
+      loader.style.display = "flex";
+    }
+  
+    var dots = document.getElementById("dots");
+  
+    function updateDots() {
+      if (dots.textContent.length >= 3) {
+        dots.textContent = "";
+      } else {
+        dots.textContent += ".";
+      }
+    }
+    
+    var intervalId = setInterval(updateDots, 333);
+  
+    // Registra o tempo de início
+    var startTime = new Date().getTime();
+    var minDuration = 3000; // 3 segundos
+  
+    window.addEventListener("load", function() {
+      var elapsed = new Date().getTime() - startTime;
+      var remaining = minDuration - elapsed;
+      if (remaining < 0) {
+        remaining = 0;
+      }
+      
+      setTimeout(function() {
+        clearInterval(intervalId);
+        if (loader) {
+          loader.style.display = "none";
+        }
+      }, remaining);
+    });
+  })();
+  
+  
+
 /* ******************************
  * AJUSTE DINÂMICO DE FONTES  *
  ****************************** */
@@ -34,6 +74,7 @@ window.addEventListener('resize', debounce(aoRedimensionar, 100));
 
 (function inicializar() {
     aoRedimensionar();
+    console.log('oi');
 })();
 
 /*************************************
@@ -48,8 +89,9 @@ const botao = document.getElementById('botao');
 const contadorPontos = document.getElementById('contadorPontos');
 const contadorRecorde = document.getElementById('contadorRecorde');
 const vidasEl = document.getElementById('vidas');
-const temporizadorEl = document.getElementById('temporizador');
 const nivelEl = document.getElementById('nomeNivel');
+const temporizadorEl = document.getElementById('temporizador');
+const mensagemFimDoJogoEl = document.getElementById('mensagemFimDoJogo');
 
 /**************************************************************
  * Obter as dimensões dos elementos tabuleiro, raquete e bola *
@@ -89,10 +131,15 @@ let contadorRegressivoAtivo = false;
  * CONTROLE DO JOGO                 *
  ************************************/
 
+(function ajustar() {
+    definirPosicoes();
+    atualizarPosicoes();
+})();
+
 function iniciar_jogo() {
 
     // variáveis
-    
+
     velocidadeBolaX = 3;
     velocidadeBolaY = 3;
 
@@ -166,7 +213,7 @@ function loopDoJogo() {
             }
             tocarSom('raquete');
             //colisão da bola na raquete
-            
+
             pontuacao += 10;
             atualizarExibicaoPontuacao();
 
@@ -243,18 +290,15 @@ tabuleiro.addEventListener('touchmove',
         const retangulo = tabuleiro.getBoundingClientRect();
         const posicaoToqueX = toque.clientX - retangulo.left;
         posicaoRaqueteX = posicaoToqueX - larguraRaquete / 2;
-        if (posicaoRaqueteX < 0) {
-            posicaoRaqueteX = 0;
+        if (jogoEmExecucao) {
+            if (posicaoRaqueteX < 0) {
+                posicaoRaqueteX = 0;
+            }
+            if (posicaoRaqueteX > larguraTabuleiro - larguraRaquete) {
+                posicaoRaqueteX = larguraTabuleiro - larguraRaquete;
+            }
+            raquete.style.left = posicaoRaqueteX + 'px';
         }
-        if (posicaoRaqueteX > larguraTabuleiro - larguraRaquete) {
-            posicaoRaqueteX = larguraTabuleiro - larguraRaquete;
-        }
-        raquete.style.left = posicaoRaqueteX + 'px';
-        if (contadorRegressivoAtivo) {
-            posicaoBolaX = posicaoRaqueteX + (larguraRaquete - tamanhoBola) / 2;
-            posicaoBolaY = alturaRaquete + 10;
-            atualizarPosicoes();
-        }    
     }
 )
 
@@ -322,6 +366,10 @@ function reiniciarRodada() {
 }
 
 function iniciarContagemRegressiva() {
+
+    definirPosicoes();
+    atualizarPosicoes();
+
     contadorRegressivoAtivo = true;
     let contagem = 3;
     temporizadorEl.style.display = 'block';
@@ -340,11 +388,26 @@ function iniciarContagemRegressiva() {
 }
 
 function fimDeJogo() {
+
+    definirPosicoes();
+    atualizarPosicoes();
+
     jogoEmExecucao = false;
     cancelAnimationFrame(idFrameAnimacao);
-    botao.style.display = 'block';
+    let contagemParaReinicio = 3;
+    mensagemFimDoJogoEl.style.display = 'block';
+    mensagemFimDoJogoEl.textContent = 'Fim do Jogo!';
     tocarSom('gameOver');
-    alert('Fim de jogo! Sua pontuação: ' + pontuacao);
+
+    const intervaloFimDoJogo = setInterval(function () {
+        contagemParaReinicio--;
+        if (contagemParaReinicio <= 0) {
+            botao.style.display = 'block';
+            clearInterval(intervaloFimDoJogo);
+            mensagemFimDoJogoEl.style.display = 'none';
+        }
+    }, 1000);
+
 }
 
 
@@ -384,3 +447,18 @@ carregarSom("base", "./recursos/somBase.mp3");
 carregarSom("extraVida", "./recursos/somExtraVida.mp3");
 carregarSom("levelUp", "./recursos/somLevelUp.mp3");
 carregarSom("gameOver", "./recursos/somGameOver.mp3");
+
+/*********************************/
+// Seleciona o elemento onde o ano será exibido
+const anoAtualElement = document.getElementById("ano-atual");
+
+// Obtém o ano atual
+const anoAtual = new Date().getFullYear();
+
+// Atualiza o conteúdo do elemento com o ano atual
+anoAtualElement.textContent = `Copyright ©
+${anoAtual} Bruno Moraes`;
+/*********************************/
+
+
+  

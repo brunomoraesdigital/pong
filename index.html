@@ -15,6 +15,10 @@
 
 <body>
   <div class="container" id="container">
+    <div id="loader" class="loader">
+      <p><span id="loading-text" class="loading-text">Carregando idéias&nbsp;</span><span id="dots"></span></p>
+      <div class="spinner"></div>
+    </div>
     <header class="cabecalho">
       <h1>Pong</h1>
       <h2>Minha versão desse clássico</h2>
@@ -53,7 +57,7 @@
           <div id="bola" class="bola"></div>
           <button class="botao" id="botao" onclick="iniciar_jogo()">iniciar</button>
           <div id="temporizador" class="temporizador"></div>
-          <div id="fimDoJogo" class="fimDoJogo"></div>
+          <div id="mensagemFimDoJogo" class="mensagemFimDoJogo"></div>
         </div>
       </div>
     </main>
