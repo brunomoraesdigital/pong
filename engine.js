@@ -1,8 +1,166 @@
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+
+let tamanhoPixel = 3;
+
+let magoParado = [
+  [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+  [0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0],
+  [0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0],
+  [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0],
+  [0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+  [0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+  [0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+  [0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0]
+];
+
+let magoAtacando = [
+  [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+  [0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0],
+  [0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0],
+  [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+  [0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0],
+  [0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+  [0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0],
+  [0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+  [1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0]
+];
+
+let magoAndando1 = [
+  [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+  [0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0],
+  [0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0],
+  [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0],
+  [0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+  [0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+  [0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0],
+  [1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+
+];
+
+let magoAndando2 = [
+  [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+  [0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0],
+  [0, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0],
+  [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0],
+  [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0],
+  [0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0],
+  [0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0],
+  [0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0]
+]
+
+// Definindo o objeto mago
+let mago = {
+  parado: {
+    nome: "parado",
+    matriz: magoParado
+  },
+  atacando: {
+    nome: "atacando",
+    matriz: magoAtacando
+  },
+  andando1: {
+    nome: "andando1",
+    matriz: magoAndando1
+  },
+  andando2: {
+    nome: "andando2",
+    matriz: magoAndando2
+  },
+
+  // Função para desenhar o mago em ação no canvas
+  desenhar: function (acao, posX, posY) {
+    let acaoEscolhida = this[acao];  // Pega a matriz da ação escolhida
+    if (acaoEscolhida) {
+      for (let i = 0; i < acaoEscolhida.matriz.length; i++) {
+        for (let j = 0; j < acaoEscolhida.matriz[i].length; j++) {
+          if (acaoEscolhida.matriz[i][j] === 1) {  // Verifica se é parte da "imagem"
+            ctx.fillStyle = "white";  // Pode mudar a cor ou o estilo conforme necessário
+            ctx.fillRect((posX * 10) + j * tamanhoPixel, (posY * 10) + i * tamanhoPixel, tamanhoPixel, tamanhoPixel);
+          }
+        }
+      }
+    }
+  }
+};
+
+// Função para desenhar o mago em qualquer posição com um único objeto
+function desenharMago(acao, posicao) {
+  let { x, y } = posicao; // Desestruturando o objeto para obter x e y
+  mago.desenhar(acao, x, y); // Usando a função de desenhar com a nova posição
+}
+
+// chamando a função desenharMago
+desenharMago("parado", { x: 1, y: 1 });
+desenharMago("andando1", { x: 1, y: 19 });
+desenharMago("andando2", { x: 16, y: 19 });
+
+let posX = -5; // Posição inicial do mago no eixo X
+let posY = 1; // Posição inicial no eixo Y
+let velocidade = 2.5; // Quantidade de pixels que ele se move por frame
+let passo = 1; // Alterna entre os sprites
+
+function loop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa o canvas
+
+    // Desenha o mago na nova posição
+    if (passo === 1) {
+        desenharMago("andando1", { x: posX, y: posY });
+        passo = 2;
+    } else if (passo === 2) {
+        desenharMago("parado", { x: posX, y: posY });
+        passo = 3;
+    } else {
+        desenharMago("andando2", { x: posX, y: posY });
+        passo = 1;
+    }
+
+    // Move o mago para a direita
+    posX += velocidade;
+
+    if (posX * tamanhoPixel > 80) {
+        posX = -5; // Volta para o começo
+    }
+
+    setTimeout(() => {
+        requestAnimationFrame(loop);
+    }, 200);  // Altera o sprite a cada 200ms
+}
+
 (function() {
     var loader = document.getElementById("loader");
     if (loader) {
       loader.style.display = "flex";
     }
+
+    loop();
   
     var dots = document.getElementById("dots");
   
@@ -18,7 +176,7 @@
   
     // Registra o tempo de início
     var startTime = new Date().getTime();
-    var minDuration = 2000; // 3 segundos
+    var minDuration = 3000; // 3 segundos
   
     window.addEventListener("load", function() {
       var elapsed = new Date().getTime() - startTime;

@@ -317,3 +317,6 @@ p {
   bottom: 3.5rem;
 }
 
+canvas {
+  margin: 0 0 0 20px ;
+}
