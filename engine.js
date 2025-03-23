@@ -196,9 +196,9 @@ function loop() {
   
   
 
-/* ******************************
+/* ****************************
  * AJUSTE DINÂMICO DE FONTES  *
- ****************************** */
+ **************************** */
 
 function obterDimensoesDaTela() {
     return {
@@ -232,7 +232,6 @@ window.addEventListener('resize', debounce(aoRedimensionar, 100));
 
 (function inicializar() {
     aoRedimensionar();
-    console.log('oi');
 })();
 
 /*************************************
@@ -265,9 +264,9 @@ const alturaRaquete = raquete.offsetHeight;
 const tamanhoBola = bola.offsetWidth;
 
 
-/************************************
- * Variáveis                        *
- ************************************/
+/*************
+ * Variáveis *
+ *************/
 let posicaoRaqueteX;
 let posicaoBolaX, posicaoBolaY;
 let velocidadeBolaX, velocidadeBolaY;
@@ -286,9 +285,11 @@ let ultimoPontoAumentoVelocidade = 0;
 
 let contadorRegressivoAtivo = false;
 
-/************************************
- * CONTROLE DO JOGO                 *
- ************************************/
+let inicioDaPartida = false;
+
+/********************
+ * CONTROLE DO JOGO *
+ ********************/
 
 (function ajustar() {
     definirPosicoes();
@@ -327,7 +328,9 @@ function iniciar_jogo() {
     botao.style.display = 'none';
     jogoEmExecucao = true;
     // Iniciar o loop
-    idFrameAnimacao = requestAnimationFrame(loopDoJogo);
+    //idFrameAnimacao = requestAnimationFrame(loopDoJogo);
+    inicioDaPartida = true;
+    iniciarContagemRegressiva();
 }
 
 
@@ -360,8 +363,12 @@ function loopDoJogo() {
 
     if (posicaoBolaY <= alturaRaquete) {
         if (
+            /*
             posicaoBolaX + tamanhoBola >= posicaoRaqueteX &&
             posicaoBolaX <= posicaoRaqueteX + larguraRaquete
+            */
+            posicaoBolaX + tamanhoBola >= posicaoRaqueteX -5 &&
+            posicaoBolaX <= posicaoRaqueteX + larguraRaquete +5
         ) {
             const pontoDeImpacto = (posicaoBolaX + tamanhoBola / 2) - (posicaoRaqueteX + larguraRaquete / 2);
             let impactoNormalizado = pontoDeImpacto / (larguraRaquete / 2);
@@ -420,7 +427,7 @@ function loopDoJogo() {
             fimDeJogo();
             return;
         }
-        iniciarContagemRegressiva()
+        iniciarContagemRegressiva();
         return; //Interrompe a execução da função
     }
 
@@ -444,47 +451,51 @@ function definirPosicoes() {
  * MOVIMENTAÇÃO DA RAQUETE COM O DEDO *
  **************************************/
 
-tabuleiro.addEventListener('touchmove',
+window.addEventListener('touchmove',
     function (evento) {
         evento.preventDefault();
+        if (!jogoEmExecucao) return;
+        if (inicioDaPartida) return;
         const toque = evento.touches[0];
         const retangulo = tabuleiro.getBoundingClientRect();
         const posicaoToqueX = toque.clientX - retangulo.left;
         posicaoRaqueteX = posicaoToqueX - larguraRaquete / 2;
-        if (jogoEmExecucao) {
-            if (posicaoRaqueteX < 0) {
-                posicaoRaqueteX = 0;
-            }
-            if (posicaoRaqueteX > larguraTabuleiro - larguraRaquete) {
-                posicaoRaqueteX = larguraTabuleiro - larguraRaquete;
-            }
-            raquete.style.left = posicaoRaqueteX + 'px';
+        //if (jogoEmExecucao) {
+        if (posicaoRaqueteX < 0) {
+            posicaoRaqueteX = 0;
         }
-    }
+        if (posicaoRaqueteX > larguraTabuleiro - larguraRaquete) {
+            posicaoRaqueteX = larguraTabuleiro - larguraRaquete;
+        }
+        raquete.style.left = posicaoRaqueteX + 'px';
+        //}
+    }, { passive: false }
 )
 
 /***************************************
- * MOVIMENTAÇÃO DA RAQUETE COM O MOUSE * xxxxxxxxxxxxxxx xxxxxxxxxxx
+ * MOVIMENTAÇÃO DA RAQUETE COM O MOUSE * 
  ***************************************/
 
-window.addEventListener('mousemove', 
+window.addEventListener('mousemove',
     function (evento) {
         evento.preventDefault();
         if (!jogoEmExecucao) return;
+        if (inicioDaPartida) return;
         const retangulo/*rect*/ = tabuleiro.getBoundingClientRect();
         const posicaoX/*mouseX*/ = evento.clientX - retangulo.left;
         posicaoRaqueteX = posicaoX - (larguraRaquete / 2);
 
-        if (jogoEmExecucao) {
-            if (posicaoRaqueteX < 0) {
-                posicaoRaqueteX = 0;
-            }
-            if (posicaoRaqueteX > larguraTabuleiro - larguraRaquete) {
-                posicaoRaqueteX = larguraTabuleiro - larguraRaquete;
-            }
-            raquete.style.left = posicaoRaqueteX + 'px';
+        //if (jogoEmExecucao) {
+        if (posicaoRaqueteX < 0) {
+            posicaoRaqueteX = 0;
         }
-});
+        if (posicaoRaqueteX > larguraTabuleiro - larguraRaquete) {
+            posicaoRaqueteX = larguraTabuleiro - larguraRaquete;
+        }
+        raquete.style.left = posicaoRaqueteX + 'px';
+        //}
+    }, { passive: false }
+);
 
 /***************************************
  * MOVIMENTAÇÃO DA RAQUETE COM TECLADO *
@@ -526,9 +537,9 @@ window.addEventListener('resize', function () {
 });
 
 
-/************************************
- * ATUALIZAÇÃO DE EXIBIÇÃO          *
- ************************************/
+/***************************
+ * ATUALIZAÇÃO DE EXIBIÇÃO *
+ ***************************/
 
 function atualizarPosicoes() {
     raquete.style.left = posicaoRaqueteX + 'px';
@@ -562,9 +573,9 @@ function atualizarExibicaoNivel() {
 }
 
 
-/************************************
- * MELHORIAS E EVENTOS               *
- ************************************/
+/***********************
+ * MELHORIAS E EVENTOS *
+ ***********************/
 function aumentarVelocidadeBola() {
     const sinalX = velocidadeBolaX >= 0 ? 1 : -1;
     const sinalY = velocidadeBolaY >= 0 ? 1 : -1;
@@ -600,7 +611,12 @@ function iniciarContagemRegressiva() {
             clearInterval(intervaloId);
             temporizadorEl.style.display = 'none';
             contadorRegressivoAtivo = false;
+            if (inicioDaPartida) {
+                inicioDaPartida = false;
+                idFrameAnimacao = requestAnimationFrame(loopDoJogo);
+            } else {
             reiniciarRodada();
+            }
         }
     }, 1000);
 }
@@ -630,9 +646,9 @@ function fimDeJogo() {
 }
 
 
-/************************************
- * GERENCIAMENTO DE SONS            *
- ************************************/
+/*************************
+ * GERENCIAMENTO DE SONS *
+ *************************/
 const contextoAudio = new (window.AudioContext || window.webkitAudioContext)();
 const buffersAudio = {};
 
@@ -667,7 +683,9 @@ carregarSom("extraVida", "./recursos/somExtraVida.mp3");
 carregarSom("levelUp", "./recursos/somLevelUp.mp3");
 carregarSom("gameOver", "./recursos/somGameOver.mp3");
 
-/*********************************/
+/*************************
+ * GERENCIAMENTO DE SONS *
+ *************************/
 // Seleciona o elemento onde o ano será exibido
 const anoAtualElement = document.getElementById("ano-atual");
 
@@ -675,9 +693,10 @@ const anoAtualElement = document.getElementById("ano-atual");
 const anoAtual = new Date().getFullYear();
 
 // Atualiza o conteúdo do elemento com o ano atual
-anoAtualElement.textContent = `Copyright ©
-${anoAtual} Bruno Moraes`;
+anoAtualElement.innerHTML = `<a href="https://bmfolio.web.app/" target="_blank" rel="noopener noreferrer">
+    © ${anoAtual} Bruno Moraes - Evoluindo a cada código
+</a> | Licença AGPL v3`;
 /*********************************/
 
 
-  
+/* ********************************************* */
